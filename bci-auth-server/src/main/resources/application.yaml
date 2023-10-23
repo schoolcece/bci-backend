@@ -1,0 +1,46 @@
+# 应用名称
+spring:
+  application:
+    name: bci-auth-server
+  datasource:
+    username: root
+    password: root
+    url: jdbc:mysql://10.112.39.8:3306/bci_test?serverTimezone=GMT%2b8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 10.112.39.8:8848
+      config:
+        server-addr: 10.112.39.8:8848
+
+  redis:
+    host: 10.112.39.8
+    port: 6379
+  session:
+    store-type: redis
+
+server:
+  http2:
+    enabled: true
+  port: 11001
+  servlet:
+    session:
+      timeout: 30m
+
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/*.xml
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+logging:
+  level:
+    com.hcc.bciauthserver: debug
+
+pythonTeamOperate: true
+
+matlabTeamOperate: true

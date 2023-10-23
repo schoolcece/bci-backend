@@ -1,0 +1,75 @@
+# 应用名称
+spring:
+  application:
+    name: bci-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 10.112.39.8:8848
+      config:
+        server-addr: 10.112.39.8:8848
+
+
+    gateway:
+      routes:
+        - id: auth_route
+          uri: lb://bci-auth-server
+          predicates:
+            - Path=/task/updateScore
+#            - Path=/code/updateCode
+#            - Path=/log/saveLog
+#            - Path=/ComputeNode/updateNode
+          filters:
+            - RewritePath=/task/(?<segment>/?.*), /auth/$\{segment}
+        - id: auth_route
+          uri: lb://bci-auth-server
+          predicates:
+            - Path=/auth/**
+          filters:
+            - RewritePath=/auth/(?<segment>/?.*), /auth/$\{segment}
+        - id: code_route
+          uri: lb://bci-code
+          predicates:
+            - Path=/code/**
+          filters:
+            - RewritePath=/code/(?<segment>/?.*), /code/$\{segment}
+        - id: task_route
+          uri: lb://bci-task
+          predicates:
+            - Path=/task/**
+          filters:
+            - RewritePath=/task/(?<segment>/?.*), /task/$\{segment}
+        - id: log_route
+          uri: lb://bci-log
+          predicates:
+            - Path=/log/**
+          filters:
+            - RewritePath=/log/(?<segment>/?.*), /log/$\{segment}
+
+
+
+
+        - id: product_route
+          uri: lb://gulishop-product
+          predicates:
+            - Path=/api/gulishopproduct/**
+          filters:
+            - RewritePath=/api/(?<segment>/?.*), /$\{segment}
+
+        - id: admin_route
+          uri: lb://renren-fast
+          predicates:
+            - Path=/api/**
+          filters:
+            - RewritePath=/api/(?<segment>/?.*), /renren-fast/$\{segment}
+
+server:
+  port: 88
+  http2:
+    enabled: true
+  ssl:
+    key-store: classpath:generate.P12
+    key-alias: ssl-demo
+    enabled: true
+    key-store-password: 151806
+    key-store-type: PKCS12

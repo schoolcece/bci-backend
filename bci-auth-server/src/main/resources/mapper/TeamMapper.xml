@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hcc.bciauthserver.mapper.TeamMapper">
+
+<!--	&lt;!&ndash; 可根据自己的需求，是否要使用 &ndash;&gt;-->
+<!--    <resultMap type="com.hcc.bciauthserver.entity.UserEntity" id="userMap">-->
+<!--        <result property="userId" column="user_id"/>-->
+<!--        <result property="username" column="username"/>-->
+<!--        <result property="password" column="password"/>-->
+<!--        <result property="mobile" column="mobile"/>-->
+<!--        <result property="status" column="status"/>-->
+<!--        <result property="createTime" column="create_time"/>-->
+<!--    </resultMap>-->
+
+
+    <select id="countByTeamName" resultType="java.lang.Integer">
+        select count(*)
+        from bci_team
+        where team_name = #{teamName}
+    </select>
+    <select id="selectByIdAndCompetition" resultType="com.hcc.bciauthserver.entity.MemberInfoVo">
+        select t.team_name, u.user_id, u.username, u.mobile, u.university, a.`role`, u.age
+        from bci_user_additional a
+            join bci_user u  using (user_id)
+            join bci_team t  using (team_id)
+        where a.team_id = #{teamId} and a.competition = #{competition}
+    </select>
+    <select id="selectTeamNameByTeamId" resultType="java.lang.String">
+        select team_name
+        from bci_team
+        where team_id = #{teamId}
+    </select>
+    <select id="getTeamInfo" resultType="com.hcc.bciauthserver.entity.TeamEntity">
+        select t.team_id, t.team_name, t.instructor, t.university
+        from bci_team t join bci_team_right_relation r using (team_Id)
+        where t.competition = #{competition} and r.right = #{type} and r.status = 1
+    </select>
+</mapper>

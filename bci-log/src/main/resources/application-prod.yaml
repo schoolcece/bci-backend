@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    username: root
+    password: 151806
+    url: jdbc:mysql://mysql-master-l7jd.bci-dev:3306/bci_code_log?serverTimezone=GMT%2b8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  cloud:
+    nacos:
+      discovery:
+        server-addr: bci-nacos-5y5a.bci-dev:8848
+      config:
+        server-addr: bci-nacos-5y5a.bci-dev:8848
+
+  redis:
+    host: bci-redis-m0dz.bci-dev
+    port: 6379

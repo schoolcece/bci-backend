@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hcc.scheduler.mapper.ComputeNodeMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.hcc.scheduler.entity.ComputeNodeEntity" id="computeResourceMap">
+        <result property="nodeId" column="node_id"/>
+        <result property="ip" column="ip"/>
+        <result property="runningTasks" column="running_tasks"/>
+        <result property="maxTasks" column="max_tasks"/>
+        <result property="status" column="status"/>
+    </resultMap>
+    <update id="addRunningTasksById">
+        UPDATE  bci_compute_resource SET running_tasks = running_tasks+1 where node_id = #{nodeId}
+    </update>
+    <update id="reduceRunningTasksById">
+        UPDATE  bci_compute_resource SET running_tasks = running_tasks-1 where node_id = #{nodeId}
+    </update>
+
+
+</mapper>
