@@ -26,7 +26,7 @@ spring:
 
 #端口
 server:
-  port: 8000
+  port: 8102
   servlet:
     session:
       timeout: 30m

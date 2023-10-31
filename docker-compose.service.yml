@@ -1,0 +1,64 @@
+version: '3'
+services:
+  bci-gateway:
+    container_name: bci-gateway
+    build:
+      context: ./bci-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "88:88"
+    networks:
+      - my-network
+
+  bci-auth-server:
+    container_name: bci-auth-server
+    build:
+      context: ./bci-auth-server
+      dockerfile: Dockerfile
+    ports:
+      - "8101:8101"
+    networks:
+      - my-network
+
+  bci-code:
+    container_name: bci-code
+    build:
+      context: ./bci-code
+      dockerfile: Dockerfile
+    ports:
+      - "8102:8102"
+    networks:
+      - my-network
+
+  bci-log:
+    container_name: bci-log
+    build:
+      context: ./bci-log
+      dockerfile: Dockerfile
+    ports:
+      - "8103:8103"
+    networks:
+      - my-network
+
+  bci-scheduler:
+    container_name: bci-scheduler
+    build:
+      context: ./bci-scheduler
+      dockerfile: Dockerfile
+    ports:
+      - "8104:8104"
+    networks:
+      - my-network
+
+  bci-task:
+    container_name: bci-task
+    build:
+      context: ./bci-task
+      dockerfile: Dockerfile
+    ports:
+      - "8105:8105"
+    networks:
+      - my-network
+
+networks:
+  my-network:

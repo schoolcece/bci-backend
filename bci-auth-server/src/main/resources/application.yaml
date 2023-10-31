@@ -23,7 +23,7 @@ spring:
 server:
   http2:
     enabled: true
-  port: 11001
+  port: 8101
   servlet:
     session:
       timeout: 30m

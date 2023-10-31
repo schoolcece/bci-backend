@@ -18,4 +18,12 @@ logs/
 
 .idea
 
+mysql-data
+
+nacos-data
+
+redis-data
+
+seata-config
+
 #**/.gitignore

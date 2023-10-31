@@ -1,25 +1,25 @@
 spring:
   datasource:
     username: root
-    password: 151806
-    url: jdbc:mysql://mysql-master-l7jd.bci-dev:3306/bci_task?serverTimezone=GMT%2b8
+    password: 123456
+    url: jdbc:mysql://mysql:3306/bci?serverTimezone=GMT%2b8
     driver-class-name: com.mysql.cj.jdbc.Driver
   cloud:
     nacos:
       discovery:
-        server-addr: bci-nacos-5y5a.bci-dev:8848
+        server-addr: nacos:8848
       config:
-        server-addr: bci-nacos-5y5a.bci-dev:8848
+        server-addr: nacos:8848
 
   redis:
-    host: bci-redis-m0dz.bci-dev
+    host: redis
     port: 6379
   session:
     store-type: redis
 
 seata:
   enabled: true
-  application-id: bci-scheduler
+  application-id: bci-code
   # 事务组的名称，对应service.vgroupMapping.default_tx_group=xxx中配置的default_tx_group
   tx-service-group: default_tx_group
   # 配置事务组与集群的对应关系
@@ -32,7 +32,7 @@ seata:
     type: nacos
     nacos:
       application: bci-seata
-      server-addr: bci-nacos-5y5a.bci-dev:8848
+      server-addr: nacos:8848
       group: SEATA_GROUP
       username: nacos
       password: nacos
@@ -41,7 +41,7 @@ seata:
   config:
     type: nacos
     nacos:
-      server-addr: bci-nacos-5y5a.bci-dev:8848
+      server-addr: nacos:8848
       group: SEATA_GROUP
       username: nacos
       password: nacos
