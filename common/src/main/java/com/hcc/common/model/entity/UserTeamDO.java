@@ -1,0 +1,49 @@
+package com.hcc.common.model.entity;
+
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Builder;
+import lombok.Data;
+
+/**
+ * Description: 用户队伍关系
+ *
+ * @Author: hcc
+ * @Date: 2023/12/5
+ */
+@Data
+@Builder
+@TableName("bci_user_team")
+public class UserTeamDO {
+
+    /**
+     * 主键id
+     */
+    @TableId
+    private Integer id;
+
+    /**
+     * 用户id
+     */
+    private int userId;
+
+    /**
+     * 队伍id
+     */
+    private int teamId;
+
+    /**
+     * 赛事id
+     */
+    private int eventId;
+
+    /**
+     * 角色
+     */
+    private int role;
+
+    /**
+     * 状态
+     */
+    private int status;
+}

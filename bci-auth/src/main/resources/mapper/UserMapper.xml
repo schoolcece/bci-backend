@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hcc.bciauth.mapper.UserMapper">
+
+    <select id="selectByUserId" resultType="java.lang.Integer">
+        select paradigm_id
+        from bci_user_paradigm
+        where user_id = #{userId}
+    </select>
+</mapper>
