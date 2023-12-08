@@ -31,4 +31,6 @@ public interface TeamMapper extends BaseMapper<TeamDO> {
      * @return
      */
     List<PermissionInfoDTO> selectPermissionByTeamId(@Param("teamId") int teamId);
+
+    void updateStatusByTeamId(@Param("teamId")int teamId, @Param("disband") int disband);
 }

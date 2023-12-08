@@ -80,7 +80,7 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
         redisComponent.setObject(redisComponent.getString(String.valueOf(user.getUserId())), user, tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
     }
 
-
+    @Transactional
     @Override
     public void joinTeam(int teamId) {
         UserInfoBO user = UserUtils.getUser();
@@ -108,6 +108,101 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
                 .status(CustomConstants.UserTeamRelationStatus.PENDING)
                 .build();
         userTeamMapper.insert(userTeam);
+    }
+
+    @Override
+    public void captainReview(int userId, int event) {
+        UserInfoBO user = UserUtils.getUser();
+        // 1. 鉴权（是否为队长）
+        UserInfoBO.TeamInfo teamInfo = Optional.ofNullable(user.getTeamInfoMap()).
+                orElseThrow(() -> new RTException(ErrorCodeEnum.NO_PERMISSION.getCode(), ErrorCodeEnum.NO_PERMISSION.getMsg()))
+                .get(event);
+        if (Objects.isNull(teamInfo) || teamInfo.getRole() != CustomConstants.UserTeamRelationRole.LEADER) {
+            throw new RTException(ErrorCodeEnum.NO_PERMISSION.getCode(), ErrorCodeEnum.NO_PERMISSION.getMsg());
+        }
+
+        // 2. 更改用户申请入队的状态为已审核
+        userTeamMapper.updateStatusByUserIdAndTeamId(userId, teamInfo.getTeamId(), CustomConstants.UserTeamRelationStatus.APPROVED);
+
+        // 3. todo： 如果被审核人已登录，更新被审核人的登录态缓存
+    }
+
+    @Transactional
+    @Override
+    public void transferCaptain(int userId, int event) {
+        UserInfoBO user = UserUtils.getUser();
+        // 1. 鉴权（是否为队长）
+        UserInfoBO.TeamInfo teamInfo = Optional.ofNullable(user.getTeamInfoMap()).
+                orElseThrow(() -> new RTException(ErrorCodeEnum.NO_PERMISSION.getCode(), ErrorCodeEnum.NO_PERMISSION.getMsg()))
+                .get(event);
+        if (Objects.isNull(teamInfo) || teamInfo.getRole() != CustomConstants.UserTeamRelationRole.LEADER) {
+            throw new RTException(ErrorCodeEnum.NO_PERMISSION.getCode(), ErrorCodeEnum.NO_PERMISSION.getMsg());
+        }
+
+        // 2. 变更用户的队伍角色
+        userTeamMapper.updateRoleByUserIdAndTeamIdWithStatus(userId, teamInfo.getTeamId(), CustomConstants.UserTeamRelationRole.LEADER, CustomConstants.UserTeamRelationStatus.APPROVED);
+        userTeamMapper.updateRoleByUserIdAndTeamIdWithStatus(user.getUserId(), teamInfo.getTeamId(), CustomConstants.UserTeamRelationRole.MEMBER, CustomConstants.UserTeamRelationStatus.APPROVED);
+
+        // 3. 更新用户的登录态缓存
+        user.getTeamInfoMap().get(event).setRole(CustomConstants.UserTeamRelationRole.MEMBER);
+        redisComponent.setObject(redisComponent.getString(String.valueOf(user.getUserId())), user, tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
+
+        // 4. todo: 如果新队长已登录， 更新新队长的登录态缓存
+    }
+
+    @Override
+    public void leaveTeam(int event) {
+        UserInfoBO user = UserUtils.getUser();
+        // 1. 获取用户对应赛事的队伍id
+        UserInfoBO.TeamInfo teamInfo = Optional.ofNullable(user.getTeamInfoMap()).
+                orElseThrow(() -> new RTException(ErrorCodeEnum.NO_PERMISSION.getCode(), ErrorCodeEnum.NO_PERMISSION.getMsg()))
+                .get(event);
+        if (Objects.isNull(teamInfo) || teamInfo.getStatus() == CustomConstants.UserTeamRelationStatus.PENDING) {
+            throw new RTException(ErrorCodeEnum.NO_PERMISSION.getCode(), ErrorCodeEnum.NO_PERMISSION.getMsg());
+        }
+
+        // 2. 解除用户和对应赛事下队伍的关系 队长不允许离队
+        if (teamInfo.getRole() == CustomConstants.UserTeamRelationRole.LEADER) {
+            throw new RTException(ErrorCodeEnum.NO_PERMISSION.getCode(), ErrorCodeEnum.NO_PERMISSION.getMsg());
+        }
+        userTeamMapper.delete(new QueryWrapper<UserTeamDO>().eq("user_id", user.getUserId()).eq("team_id", teamInfo.getTeamId()));
+
+        // 3. todo：逻辑删除该用户的所有历史提交代码和任务（涉及到远程调用，需要考虑整体操作的原子性）
+
+        // 4. 更新登录态缓存
+        user.getTeamInfoMap().remove(event);
+        redisComponent.setObject(redisComponent.getString(String.valueOf(user.getUserId())), user, tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
+    }
+
+    @Override
+    @Transactional
+    public void disbandTeam(int event) {
+        UserInfoBO user = UserUtils.getUser();
+        // 1. 鉴权（是否为队长）
+        UserInfoBO.TeamInfo teamInfo = Optional.ofNullable(user.getTeamInfoMap()).
+                orElseThrow(() -> new RTException(ErrorCodeEnum.NO_PERMISSION.getCode(), ErrorCodeEnum.NO_PERMISSION.getMsg()))
+                .get(event);
+        if (Objects.isNull(teamInfo) || teamInfo.getRole() != CustomConstants.UserTeamRelationRole.LEADER) {
+            throw new RTException(ErrorCodeEnum.NO_PERMISSION.getCode(), ErrorCodeEnum.NO_PERMISSION.getMsg());
+        }
+
+        // 2. 确认队伍是否不包含其他队员，如果有其他队员不允许注销
+        Long count = userTeamMapper.selectCount(new QueryWrapper<UserTeamDO>()
+                .eq("team_id", teamInfo.getTeamId())
+                .eq("status", CustomConstants.UserTeamRelationStatus.APPROVED));
+        if (count > 1) {
+            throw new RTException(ErrorCodeEnum.NO_PERMISSION.getCode(), ErrorCodeEnum.NO_PERMISSION.getMsg());
+        }
+
+        // 3. todo：逻辑删除该用户的所有历史提交代码和任务（涉及到远程调用，需要考虑整体操作的原子性）
+
+        // 4. 逻辑删除队伍信息，接触队伍与用户关系
+        teamMapper.updateStatusByTeamId(teamInfo.getTeamId(), CustomConstants.TeamStatus.DISBAND);
+        userTeamMapper.delete(new QueryWrapper<UserTeamDO>().eq("team_id", teamInfo.getTeamId()));
+
+        // 5. 更新用户登录态缓存
+        user.getTeamInfoMap().remove(event);
+        redisComponent.setObject(redisComponent.getString(String.valueOf(user.getUserId())), user, tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
     }
 
     private void checkTeamMemberOver(int teamId) {

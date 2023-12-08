@@ -26,6 +26,7 @@ public enum ErrorCodeEnum {
     TEAM_NOT_EXIST(100405, "队伍不存在"),
     // 2.6 队伍人数超上限
     TEAM_MEMBER_OVER(100406, "队伍人数超上限");
+    // 2.7 队伍
 
 
     /**

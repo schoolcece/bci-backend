@@ -2,6 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.hcc.bciauth.mapper.TeamMapper">
+    <update id="updateStatusByTeamId">
+        update bci_team
+        set status = #{disband}
+        where team_id = #{teamId}
+    </update>
 
     <select id="selectTeamInfoByUserId" resultType="com.hcc.common.model.dto.TeamInfoDTO">
         select bt.event_id, bt.id team_id, but.role, but.status

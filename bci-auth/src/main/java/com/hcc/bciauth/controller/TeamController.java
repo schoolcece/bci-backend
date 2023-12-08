@@ -55,6 +55,7 @@ public class TeamController {
     @PostMapping("/captainReview")
     public R captainReview(@RequestParam("userId") int userId,
                              @RequestParam("event") int event) {
+        teamService.captainReview(userId, event);
         return R.ok();
     }
 
@@ -67,6 +68,7 @@ public class TeamController {
     @Loggable("移交队伍")
     public R transferCaptain(@RequestParam("userId") int userId,
                              @RequestParam("event") int event) {
+        teamService.transferCaptain(userId, event);
         return R.ok();
     }
 
@@ -77,6 +79,7 @@ public class TeamController {
      */
     @Loggable("离开队伍")
     public R leaveTeam(@RequestParam("event") int event) {
+        teamService.leaveTeam(event);
         return R.ok();
     }
 
@@ -87,6 +90,7 @@ public class TeamController {
      */
     @Loggable("注销队伍")
     public R disbandTeam(@RequestParam("event") int event) {
+        teamService.disbandTeam(event);
         return R.ok();
     }
 

@@ -1,6 +1,5 @@
 package com.hcc.common.component;
 
-import com.hcc.common.model.bo.UserInfoBO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;

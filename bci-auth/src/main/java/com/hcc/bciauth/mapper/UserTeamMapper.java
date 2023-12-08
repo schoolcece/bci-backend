@@ -3,6 +3,7 @@ package com.hcc.bciauth.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.hcc.common.model.entity.UserTeamDO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * Description: mapper层 成员队伍关系操作
@@ -12,4 +13,7 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface UserTeamMapper extends BaseMapper<UserTeamDO> {
+    void updateStatusByUserIdAndTeamId(@Param("userId") int userId, @Param("teamId") int teamId, @Param("approved") int approved);
+
+    void updateRoleByUserIdAndTeamIdWithStatus(@Param("userId")int userId, @Param("teamId")int teamId, @Param("role")int role, @Param("approved")int approved);
 }

@@ -2,4 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.hcc.bciauth.mapper.UserTeamMapper">
+    <update id="updateStatusByUserIdAndTeamId">
+        update bci_user_team
+        set status = #{approved}
+        where userId = #{userId} and teamId = #{teamId}
+    </update>
+    <update id="updateRoleByUserIdAndTeamIdWithStatus">
+        update bci_user_team
+        set role = #{role}
+        where userId = #{userId} and teamId = #{teamId} and status = #{approved}
+    </update>
 </mapper>

@@ -22,4 +22,30 @@ public interface TeamService extends IService<TeamDO> {
      * @param teamId
      */
     void joinTeam(int teamId);
+
+    /**
+     * 审核入队申请
+     * @param userId
+     * @param event
+     */
+    void captainReview(int userId, int event);
+
+    /**
+     * 移交队长身份
+     * @param userId
+     * @param event
+     */
+    void transferCaptain(int userId, int event);
+
+    /**
+     * 离队
+     * @param event
+     */
+    void leaveTeam(int event);
+
+    /**
+     * 注销队伍
+     * @param event
+     */
+    void disbandTeam(int event);
 }
