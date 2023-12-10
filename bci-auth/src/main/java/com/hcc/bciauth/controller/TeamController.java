@@ -65,7 +65,8 @@ public class TeamController {
      * @param event
      * @return
      */
-    @Loggable("移交队伍")
+    @Loggable("移交队长")
+    @PostMapping("/transferCaptain")
     public R transferCaptain(@RequestParam("userId") int userId,
                              @RequestParam("event") int event) {
         teamService.transferCaptain(userId, event);
@@ -78,6 +79,7 @@ public class TeamController {
      * @return
      */
     @Loggable("离开队伍")
+    @PostMapping("/leaveTeam")
     public R leaveTeam(@RequestParam("event") int event) {
         teamService.leaveTeam(event);
         return R.ok();
@@ -89,6 +91,7 @@ public class TeamController {
      * @return
      */
     @Loggable("注销队伍")
+    @PostMapping("/disbandTeam")
     public R disbandTeam(@RequestParam("event") int event) {
         teamService.disbandTeam(event);
         return R.ok();
@@ -101,8 +104,10 @@ public class TeamController {
      * @return
      */
     @Loggable("报名参赛")
+    @PostMapping("/registerForCompetition")
     public R registerForCompetition(@RequestParam("event") int event,
                                     @RequestParam("paradigm") int paradigm) {
+        teamService.registerForCompetition(event, paradigm);
         return R.ok();
     }
 }

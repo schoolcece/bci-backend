@@ -18,20 +18,9 @@ import java.util.Optional;
  */
 public class UserUtils {
 
-    private static UserInfoBO userInfoBO;
-
     public static UserInfoBO getUser() {
-        if (Objects.isNull(userInfoBO)) {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            userInfoBO = (UserInfoBO) authentication.getPrincipal();
-        }
-        return userInfoBO;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return (UserInfoBO) authentication.getPrincipal();
     }
 
-    public static boolean isCaptain(int event) {
-        UserInfoBO.TeamInfo teamInfo = Optional.ofNullable(userInfoBO.getTeamInfoMap()).
-                orElseThrow(() -> new RTException(ErrorCodeEnum.NO_PERMISSION.getCode(), ErrorCodeEnum.NO_PERMISSION.getMsg()))
-                .get(event);
-        return !Objects.isNull(teamInfo) && teamInfo.getRole() == CustomConstants.UserTeamRelationRole.LEADER;
-    }
 }

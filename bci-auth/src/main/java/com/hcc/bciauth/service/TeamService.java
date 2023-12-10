@@ -48,4 +48,11 @@ public interface TeamService extends IService<TeamDO> {
      * @param event
      */
     void disbandTeam(int event);
+
+    /**
+     * 报名参赛
+     * @param event
+     * @param paradigm
+     */
+    void registerForCompetition(int event, int paradigm);
 }

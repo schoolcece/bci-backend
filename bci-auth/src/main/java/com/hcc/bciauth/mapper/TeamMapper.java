@@ -3,6 +3,7 @@ package com.hcc.bciauth.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.hcc.common.model.dto.PermissionInfoDTO;
 import com.hcc.common.model.dto.TeamInfoDTO;
+import com.hcc.common.model.entity.ApplicationDO;
 import com.hcc.common.model.entity.TeamDO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -33,4 +34,6 @@ public interface TeamMapper extends BaseMapper<TeamDO> {
     List<PermissionInfoDTO> selectPermissionByTeamId(@Param("teamId") int teamId);
 
     void updateStatusByTeamId(@Param("teamId")int teamId, @Param("disband") int disband);
+
+    void insertApplicationIfNotExist(@Param("application") ApplicationDO applicationDO);
 }

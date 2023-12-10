@@ -2,6 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.hcc.bciauth.mapper.TeamMapper">
+    <insert id="insertApplicationIfNotExist">
+        insert ignore into
+        bci_application
+        (paradigm_id, team_id, update_user)
+        values (#{application.paradigmId}, #{application.teamId}, #{application.updateUser})
+    </insert>
     <update id="updateStatusByTeamId">
         update bci_team
         set status = #{disband}

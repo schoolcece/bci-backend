@@ -47,7 +47,7 @@ public class RedisComponent {
     }
 
     public void expireForString(String key, long timeout, TimeUnit timeUnit) {
-        objectRedisTemplate.expire(key, timeout, timeUnit);
+        stringRedisTemplate.expire(key, timeout, timeUnit);
     }
 
     public void expireForObject(String key, long timeout, TimeUnit timeUnit) {
@@ -56,6 +56,5 @@ public class RedisComponent {
 
     public void deleteForObject(String key) {
         Boolean delete = objectRedisTemplate.delete(key);
-        System.out.println(delete);
     }
 }

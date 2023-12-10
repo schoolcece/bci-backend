@@ -50,7 +50,7 @@ public class RedisAuthenticationTokenFilter extends OncePerRequestFilter {
             return;
         }
         redisComponent.expireForObject(token, tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
-        redisComponent.expireForObject(String.valueOf(userInfoBO.getUserId()), tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
+        redisComponent.expireForString(String.valueOf(userInfoBO.getUserId()), tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userInfoBO, null, null);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);

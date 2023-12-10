@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hcc.common.constant.CustomConstants;
 import com.hcc.bciauth.mapper.TeamMapper;
 import com.hcc.bciauth.mapper.UserTeamMapper;
+import com.hcc.common.model.entity.ApplicationDO;
 import com.hcc.common.model.entity.TeamDO;
 import com.hcc.common.model.entity.UserTeamDO;
 import com.hcc.common.model.param.CreateTeamParam;
@@ -53,7 +54,7 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
         }
 
         // 2. 检查队名唯一性
-        checkTeamNameUnique(createTeamParam.getTeamName());
+        checkTeamNameUnique(createTeamParam.getTeamName(), createTeamParam.getEventId());
 
         // 3. 移除可能存在的同赛事历史入队申请, 新增队伍信息和用户队伍关联信息
         if (!Objects.isNull(teamInfo)) {
@@ -78,6 +79,7 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
         // 4. 更新登录态缓存信息
         user.getTeamInfoMap().put(createTeamParam.getEventId(), new UserInfoBO.TeamInfo(teamDO.getId(), CustomConstants.UserTeamRelationRole.LEADER, CustomConstants.UserTeamRelationStatus.APPROVED));
         redisComponent.setObject(redisComponent.getString(String.valueOf(user.getUserId())), user, tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
+        redisComponent.expireForString(String.valueOf(user.getUserId()), tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
     }
 
     @Transactional
@@ -146,6 +148,7 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
         // 3. 更新用户的登录态缓存
         user.getTeamInfoMap().get(event).setRole(CustomConstants.UserTeamRelationRole.MEMBER);
         redisComponent.setObject(redisComponent.getString(String.valueOf(user.getUserId())), user, tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
+        redisComponent.expireForString(String.valueOf(user.getUserId()), tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
 
         // 4. todo: 如果新队长已登录， 更新新队长的登录态缓存
     }
@@ -172,6 +175,7 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
         // 4. 更新登录态缓存
         user.getTeamInfoMap().remove(event);
         redisComponent.setObject(redisComponent.getString(String.valueOf(user.getUserId())), user, tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
+        redisComponent.expireForString(String.valueOf(user.getUserId()), tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
     }
 
     @Override
@@ -203,6 +207,31 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
         // 5. 更新用户登录态缓存
         user.getTeamInfoMap().remove(event);
         redisComponent.setObject(redisComponent.getString(String.valueOf(user.getUserId())), user, tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
+        redisComponent.expireForString(String.valueOf(user.getUserId()), tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
+    }
+
+    @Override
+    public void registerForCompetition(int event, int paradigm) {
+        UserInfoBO user = UserUtils.getUser();
+        // 1. 鉴权（是否为队长）
+        UserInfoBO.TeamInfo teamInfo = Optional.ofNullable(user.getTeamInfoMap()).
+                orElseThrow(() -> new RTException(ErrorCodeEnum.NO_PERMISSION.getCode(), ErrorCodeEnum.NO_PERMISSION.getMsg()))
+                .get(event);
+        if (Objects.isNull(teamInfo) || teamInfo.getRole() != CustomConstants.UserTeamRelationRole.LEADER) {
+            throw new RTException(ErrorCodeEnum.NO_PERMISSION.getCode(), ErrorCodeEnum.NO_PERMISSION.getMsg());
+        }
+
+        // 2. 如果已有报名记录不操作，否则新增报名记录
+        ApplicationDO applicationDO = ApplicationDO.builder()
+                .paradigmId(paradigm)
+                .teamId(teamInfo.getTeamId())
+                .updateUser(user.getUserId()).build();
+        teamMapper.insertApplicationIfNotExist(applicationDO);
+
+        // 3. 更新登录态缓存
+        user.getPermissions().putIfAbsent(event, CustomConstants.ApplicationStatus.PENDING);
+        redisComponent.setObject(redisComponent.getString(String.valueOf(user.getUserId())), user, tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
+        redisComponent.expireForString(String.valueOf(user.getUserId()), tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
     }
 
     private void checkTeamMemberOver(int teamId) {
@@ -212,8 +241,8 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
         }
     }
 
-    private void checkTeamNameUnique(String teamName) {
-        Long count = teamMapper.selectCount(new QueryWrapper<TeamDO>().eq("team_name", teamName));
+    private void checkTeamNameUnique(String teamName, int eventId) {
+        Long count = teamMapper.selectCount(new QueryWrapper<TeamDO>().eq("team_name", teamName).eq("event_id", eventId));
         if (count > 0) {
             throw new RTException(ErrorCodeEnum.TEAM_NAME_EXIST.getCode(), ErrorCodeEnum.TEAM_NAME_EXIST.getMsg());
         }
