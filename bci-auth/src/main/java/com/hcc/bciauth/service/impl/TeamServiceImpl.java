@@ -2,6 +2,7 @@ package com.hcc.bciauth.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.hcc.bciauth.feign.CompetitionFeign;
 import com.hcc.common.constant.CustomConstants;
 import com.hcc.bciauth.mapper.TeamMapper;
 import com.hcc.bciauth.mapper.UserTeamMapper;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -40,6 +42,8 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
     private UserTeamMapper userTeamMapper;
     @Autowired
     private BCIConfig.TokenConfig tokenConfig;
+    @Autowired
+    private CompetitionFeign competitionFeign;
 
     @Override
     @Transactional
@@ -221,14 +225,19 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
             throw new RTException(ErrorCodeEnum.NO_PERMISSION.getCode(), ErrorCodeEnum.NO_PERMISSION.getMsg());
         }
 
-        // 2. 如果已有报名记录不操作，否则新增报名记录
+        // 2. 查询当前时刻是否允许报名（是否在比赛期间）
+        if (!competitionFeign.inTime(new Date(), event)) {
+            throw new RTException(ErrorCodeEnum.EVENT_NOT_IN_TIME.getCode(), ErrorCodeEnum.EVENT_NOT_IN_TIME.getMsg());
+        }
+
+        // 3. 如果已有报名记录不操作，否则新增报名记录
         ApplicationDO applicationDO = ApplicationDO.builder()
                 .paradigmId(paradigm)
                 .teamId(teamInfo.getTeamId())
                 .updateUser(user.getUserId()).build();
         teamMapper.insertApplicationIfNotExist(applicationDO);
 
-        // 3. 更新登录态缓存
+        // 4. 更新登录态缓存
         user.getPermissions().putIfAbsent(event, CustomConstants.ApplicationStatus.PENDING);
         redisComponent.setObject(redisComponent.getString(String.valueOf(user.getUserId())), user, tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
         redisComponent.expireForString(String.valueOf(user.getUserId()), tokenConfig.getTimeout(), tokenConfig.getTimeUnit());

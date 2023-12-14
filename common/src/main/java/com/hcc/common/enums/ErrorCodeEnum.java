@@ -11,6 +11,8 @@ public enum ErrorCodeEnum {
     // 1. 系统异常
     // 1.1 未知异常
     UN_KNOW_EXCEPTION(100500, "系统未知异常， 请联系管理员解决！"),
+    // 1.2 代码上传io异常
+    SYSTEM_ERROR(100501, "服务器资源异常， 请联系管理员解决"),
 
     // 2. 客户端异常
     // 2.1 请求参数异常
@@ -25,8 +27,10 @@ public enum ErrorCodeEnum {
     // 2.5 队伍不存在
     TEAM_NOT_EXIST(100405, "队伍不存在"),
     // 2.6 队伍人数超上限
-    TEAM_MEMBER_OVER(100406, "队伍人数超上限");
-    // 2.7 队伍
+    TEAM_MEMBER_OVER(100406, "队伍人数超上限"),
+    // 2.7 当前时刻不在比赛期间
+    EVENT_NOT_IN_TIME(100407, "当前时刻不在比赛期间");
+
 
 
     /**

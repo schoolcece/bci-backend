@@ -10,6 +10,8 @@ drop table if exists bci_team;
 drop table if exists bci_user_team;
 drop table if exists bci_application;
 
+drop table if exists bci_code;
+
 CREATE TABLE `bci_event`(
                             `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
                             `event_name` VARCHAR(255) NOT NULL COMMENT '赛事名称',
@@ -22,6 +24,12 @@ CREATE TABLE `bci_event`(
 );
 ALTER TABLE
     `bci_event` comment '赛事表';
+
+insert into bci_event (event_name, event_leader, event_desc, logo_url, start_time, end_time)
+values ('python赛事', 1, 'python算法提交', 'gdf', '2024-06-01', '2024-07-31');
+
+insert into bci_event (event_name, event_leader, event_desc, logo_url, start_time, end_time)
+values ('matlab赛事', 1, 'matlab算法提交', 'gdf', '2024-06-01', '2024-07-31');
 
 CREATE TABLE `bci_paradigm`(
                                `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -36,6 +44,19 @@ CREATE TABLE `bci_paradigm`(
 );
 ALTER TABLE
     `bci_paradigm` comment '范式表';
+
+insert into bci_paradigm (event_id, paradigm_name, paradigm_desc, a_data, b_data, change_time, image)
+values (1, 'ssvep', '稳态视觉诱发电位', '/fff/fff', '/ff/ff', '2024-07-01', 'ssvep:v1.0');
+insert into bci_paradigm (event_id, paradigm_name, paradigm_desc, a_data, b_data, change_time, image)
+values (1, 'mi', '运动想象', '/fff/fff', '/ff/ff', '2024-07-01', 'mi:v1.0');
+insert into bci_paradigm (event_id, paradigm_name, paradigm_desc, a_data, b_data, change_time, image)
+values (1, 'erp', 'erp', '/fff/fff', '/ff/ff', '2024-07-01', 'erp:v1.0');
+insert into bci_paradigm (event_id, paradigm_name, paradigm_desc, a_data, b_data, change_time, image)
+values (1, 'turing', '图灵', '/fff/fff', '/ff/ff', '2024-07-01', 'turing:v1.0');
+insert into bci_paradigm (event_id, paradigm_name, paradigm_desc, a_data, b_data, change_time, image)
+values (1, 'attack', '对抗攻击', '/fff/fff', '/ff/ff', '2024-07-01', 'attack:v1.0');
+insert into bci_paradigm (event_id, paradigm_name, paradigm_desc, a_data, b_data, change_time, image)
+values (2, 'emotion', '情感', '/fff/fff', '/ff/ff', '2024-07-01', 'emotion:v1.0');
 
 CREATE TABLE `bci_user_paradigm`(
                                     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -107,3 +128,17 @@ insert into bci.bci_user (id, username, mobile, email, university, profession, u
 
 insert into bci.bci_user (id, username, mobile, email, university, profession, uid, birthday, role) values (null, 'hxx', '15735181737', '1301646502@qq.com', 'byut', '电子信息', 'hcc1573518', '1996-09-18', 0);
 
+CREATE TABLE `bci_code`(
+                           `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+                           `paradigm_id` INT NOT NULL comment '范式',
+                           `url` VARCHAR(255) NOT NULL comment '代码路径',
+                           `user_id` INT NOT NULL comment '上传用户',
+                           `file_name` VARCHAR(255) NOT NULL comment '文件名',
+                           `md5` VARCHAR(255) NOT NULL COMMENT '文件md5码',
+                           `create_time` TIMESTAMP NOT NULL default CURRENT_TIMESTAMP comment '上传时间',
+                           `status` TINYINT NOT NULL default 0 comment '状态： 0代表待执行, 1代表运行中, 2代表运行成功, 3代表运行错误',
+                           `show_status` TINYINT NOT NULL default 1 comment '是否展示： 0代表不展示, 1代表展示',
+                           primary key (`id`)
+);
+ALTER TABLE
+    `bci_code` comment '代码表';

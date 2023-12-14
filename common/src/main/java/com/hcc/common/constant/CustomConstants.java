@@ -120,4 +120,14 @@ public interface CustomConstants {
     class InnerToken {
         public static final String TOKEN = "masterKeyHcc";
     }
+
+    /**
+     * 代码状态
+     */
+    class BCICodeStatus {
+        public static final int PENDING = 0;
+        public static final int PROCESSING = 1;
+        public static final int SUCCESS = 2;
+        public static final int FILED = 3;
+    }
 }

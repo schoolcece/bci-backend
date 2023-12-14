@@ -22,5 +22,12 @@ public interface BCIConfig {
         private TimeUnit timeUnit;
     }
 
+    @Configuration
+    @ConfigurationProperties("bci.code")
+    @Data
+    class CodeConfig {
+        private String url;
+    }
+
 
 }
