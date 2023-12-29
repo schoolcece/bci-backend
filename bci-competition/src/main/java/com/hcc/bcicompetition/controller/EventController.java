@@ -4,11 +4,13 @@ import com.hcc.bcicompetition.service.EventService;
 import com.hcc.common.annotation.Loggable;
 import com.hcc.common.model.R;
 import com.hcc.common.model.param.EventParam;
+import com.hcc.common.model.vo.EventVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -33,6 +35,15 @@ public class EventController {
     @Loggable("发布赛事")
     public R publishEvent(@RequestBody EventParam eventParam) {
         return R.ok();
+    }
+
+    /**
+     * 查询所有赛事信息接口
+     * @return
+     */
+    @GetMapping("/listEvent")
+    public R listEvent() {
+        return R.ok().put("data", eventService.listEvent());
     }
 
     /**

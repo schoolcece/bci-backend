@@ -1,6 +1,9 @@
 package com.hcc.bcicompetition.service;
 
+import com.hcc.common.model.vo.EventVO;
+
 import java.util.Date;
+import java.util.List;
 
 /**
  * Description: service层 赛事信息服务层接口
@@ -16,4 +19,7 @@ public interface EventService {
      * @return
      */
     boolean inTime(Date curTime, int event);
+
+    List<EventVO> listEvent();
+
 }
