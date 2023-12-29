@@ -25,6 +25,6 @@ public class LoginParam {
      * 密码
      */
     @NotBlank(message = "密码不能为空")
-    private String code;
+    private String password;
 }
 

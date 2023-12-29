@@ -1,5 +1,7 @@
 package com.hcc.common.constant;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Description: 自定义常量
  *
@@ -129,5 +131,13 @@ public interface CustomConstants {
         public static final int PROCESSING = 1;
         public static final int SUCCESS = 2;
         public static final int FILED = 3;
+    }
+
+    /**
+     * token配置
+     */
+    class TokenConfig {
+        public static final long TIMEOUT = 1;
+        public static final TimeUnit TIME_UNIT = TimeUnit.HOURS;
     }
 }

@@ -5,6 +5,7 @@ import com.hcc.common.model.param.RegisterParam;
 import com.hcc.bciauth.service.UserService;
 import com.hcc.common.annotation.Loggable;
 import com.hcc.common.model.R;
+import com.hcc.common.utils.UserUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -42,5 +43,14 @@ public class UserController {
     @PostMapping("/login")
     public R login(@RequestBody @Valid LoginParam loginParam) {
         return R.ok().put("data", userService.login(loginParam));
+    }
+
+    /**
+     * 获取用户信息接口
+     * @return
+     */
+    @GetMapping("/getInfo")
+    public R getInfo() {
+        return R.ok().put("data", UserUtils.getUser());
     }
 }

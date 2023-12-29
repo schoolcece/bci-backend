@@ -23,8 +23,6 @@ public class RedisAuthenticationTokenFilter extends OncePerRequestFilter {
     @Autowired
     RedisComponent redisComponent;
 
-    @Autowired
-    BCIConfig.TokenConfig tokenConfig;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -49,8 +47,8 @@ public class RedisAuthenticationTokenFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        redisComponent.expireForObject(token, tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
-        redisComponent.expireForString(String.valueOf(userInfoBO.getUserId()), tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
+        redisComponent.expireForObject(token, CustomConstants.TokenConfig.TIMEOUT, CustomConstants.TokenConfig.TIME_UNIT);
+        redisComponent.expireForString(String.valueOf(userInfoBO.getUserId()), CustomConstants.TokenConfig.TIMEOUT, CustomConstants.TokenConfig.TIME_UNIT);
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userInfoBO, null, null);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);

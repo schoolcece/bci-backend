@@ -12,7 +12,6 @@ import com.hcc.common.model.entity.UserDO;
 import com.hcc.common.model.param.LoginParam;
 import com.hcc.bciauth.service.UserService;
 import com.hcc.common.component.RedisComponent;
-import com.hcc.common.config.BCIConfig;
 import com.hcc.common.enums.ErrorCodeEnum;
 import com.hcc.common.exception.RTException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +30,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
     @Autowired
     private RedisComponent redisComponent;
 
-    @Autowired
-    private BCIConfig.TokenConfig tokenConfig;
 
     @Override
     public String login(LoginParam loginParam) {
@@ -45,7 +42,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         if (userDO == null) {
             throw new RTException(ErrorCodeEnum.USER_NOT_EXIST.getCode(), ErrorCodeEnum.USER_NOT_EXIST.getMsg());
         }
-        if (!loginParam.getCode().equals(userDO.getUid())) {
+        if (!loginParam.getPassword().equals(userDO.getUid())) {
             throw new RTException(ErrorCodeEnum.ACCOUNT_PASSWORD_INVALID.getCode(), ErrorCodeEnum.ACCOUNT_PASSWORD_INVALID.getMsg());
         }
 
@@ -87,8 +84,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
 
         // 3. 缓存用户信息， 以随机token为key， 以用户信息为value， 将用户信息缓存到redis 返回token
         String token = UUID.randomUUID().toString().replace("-","");
-        redisComponent.setObject(token, userInfoBO, tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
-        redisComponent.setString(userDO.getId().toString(), token, tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
+        redisComponent.setObject(token, userInfoBO, CustomConstants.TokenConfig.TIMEOUT, CustomConstants.TokenConfig.TIME_UNIT);
+        redisComponent.setString(userDO.getId().toString(), token, CustomConstants.TokenConfig.TIMEOUT, CustomConstants.TokenConfig.TIME_UNIT);
         return token;
     }
 }

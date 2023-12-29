@@ -12,7 +12,6 @@ import com.hcc.common.model.entity.UserTeamDO;
 import com.hcc.common.model.param.CreateTeamParam;
 import com.hcc.bciauth.service.TeamService;
 import com.hcc.common.component.RedisComponent;
-import com.hcc.common.config.BCIConfig;
 import com.hcc.common.enums.ErrorCodeEnum;
 import com.hcc.common.exception.RTException;
 import com.hcc.common.model.bo.UserInfoBO;
@@ -40,8 +39,6 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
     private RedisComponent redisComponent;
     @Autowired
     private UserTeamMapper userTeamMapper;
-    @Autowired
-    private BCIConfig.TokenConfig tokenConfig;
     @Autowired
     private CompetitionFeign competitionFeign;
 
@@ -82,8 +79,8 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
 
         // 4. 更新登录态缓存信息
         user.getTeamInfoMap().put(createTeamParam.getEventId(), new UserInfoBO.TeamInfo(teamDO.getId(), CustomConstants.UserTeamRelationRole.LEADER, CustomConstants.UserTeamRelationStatus.APPROVED));
-        redisComponent.setObject(redisComponent.getString(String.valueOf(user.getUserId())), user, tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
-        redisComponent.expireForString(String.valueOf(user.getUserId()), tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
+        redisComponent.setObject(redisComponent.getString(String.valueOf(user.getUserId())), user, CustomConstants.TokenConfig.TIMEOUT, CustomConstants.TokenConfig.TIME_UNIT);
+        redisComponent.expireForString(String.valueOf(user.getUserId()), CustomConstants.TokenConfig.TIMEOUT, CustomConstants.TokenConfig.TIME_UNIT);
     }
 
     @Transactional
@@ -151,8 +148,8 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
 
         // 3. 更新用户的登录态缓存
         user.getTeamInfoMap().get(event).setRole(CustomConstants.UserTeamRelationRole.MEMBER);
-        redisComponent.setObject(redisComponent.getString(String.valueOf(user.getUserId())), user, tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
-        redisComponent.expireForString(String.valueOf(user.getUserId()), tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
+        redisComponent.setObject(redisComponent.getString(String.valueOf(user.getUserId())), user, CustomConstants.TokenConfig.TIMEOUT, CustomConstants.TokenConfig.TIME_UNIT);
+        redisComponent.expireForString(String.valueOf(user.getUserId()), CustomConstants.TokenConfig.TIMEOUT, CustomConstants.TokenConfig.TIME_UNIT);
 
         // 4. todo: 如果新队长已登录， 更新新队长的登录态缓存
     }
@@ -178,8 +175,8 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
 
         // 4. 更新登录态缓存
         user.getTeamInfoMap().remove(event);
-        redisComponent.setObject(redisComponent.getString(String.valueOf(user.getUserId())), user, tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
-        redisComponent.expireForString(String.valueOf(user.getUserId()), tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
+        redisComponent.setObject(redisComponent.getString(String.valueOf(user.getUserId())), user, CustomConstants.TokenConfig.TIMEOUT, CustomConstants.TokenConfig.TIME_UNIT);
+        redisComponent.expireForString(String.valueOf(user.getUserId()), CustomConstants.TokenConfig.TIMEOUT, CustomConstants.TokenConfig.TIME_UNIT);
     }
 
     @Override
@@ -210,8 +207,8 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
 
         // 5. 更新用户登录态缓存
         user.getTeamInfoMap().remove(event);
-        redisComponent.setObject(redisComponent.getString(String.valueOf(user.getUserId())), user, tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
-        redisComponent.expireForString(String.valueOf(user.getUserId()), tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
+        redisComponent.setObject(redisComponent.getString(String.valueOf(user.getUserId())), user, CustomConstants.TokenConfig.TIMEOUT, CustomConstants.TokenConfig.TIME_UNIT);
+        redisComponent.expireForString(String.valueOf(user.getUserId()), CustomConstants.TokenConfig.TIMEOUT, CustomConstants.TokenConfig.TIME_UNIT);
     }
 
     @Override
@@ -239,8 +236,8 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
 
         // 4. 更新登录态缓存
         user.getPermissions().putIfAbsent(event, CustomConstants.ApplicationStatus.PENDING);
-        redisComponent.setObject(redisComponent.getString(String.valueOf(user.getUserId())), user, tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
-        redisComponent.expireForString(String.valueOf(user.getUserId()), tokenConfig.getTimeout(), tokenConfig.getTimeUnit());
+        redisComponent.setObject(redisComponent.getString(String.valueOf(user.getUserId())), user, CustomConstants.TokenConfig.TIMEOUT, CustomConstants.TokenConfig.TIME_UNIT);
+        redisComponent.expireForString(String.valueOf(user.getUserId()), CustomConstants.TokenConfig.TIMEOUT, CustomConstants.TokenConfig.TIME_UNIT);
     }
 
     private void checkTeamMemberOver(int teamId) {
