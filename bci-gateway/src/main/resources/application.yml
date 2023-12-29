@@ -1,0 +1,28 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: auth_route
+          uri: http://localhost:8080
+          predicates:
+            - Path=/auth/**
+          filters:
+            - RewritePath=/auth/(?<segment>/?.*), /auth/$\{segment}
+
+        - id: competition_route
+          uri: http://localhost:8082
+          predicates:
+            - Path=/event/**
+          filters:
+            - RewritePath=/event/(?<segment>/?.*), /event/$\{segment}
+
+        - id: competition_route
+          uri: http://localhost:8082
+          predicates:
+            - Path=/paradigm/**
+          filters:
+            - RewritePath=/paradigm/(?<segment>/?.*), /paradigm/$\{segment}
+
+
+server:
+  port: 88

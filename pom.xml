@@ -12,5 +12,9 @@
     <modules>
         <module>common</module>
         <module>bci-auth</module>
+        <module>bci-code</module>
+        <module>bci-task</module>
+        <module>bci-component</module>
+        <module>bci-competition</module>
     </modules>
 </project>
