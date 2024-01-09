@@ -16,6 +16,10 @@ import com.hcc.common.enums.ErrorCodeEnum;
 import com.hcc.common.exception.RTException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
 import java.util.*;
 
 @Service
@@ -87,5 +91,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         redisComponent.setObject(token, userInfoBO, CustomConstants.TokenConfig.TIMEOUT, CustomConstants.TokenConfig.TIME_UNIT);
         redisComponent.setString(userDO.getId().toString(), token, CustomConstants.TokenConfig.TIMEOUT, CustomConstants.TokenConfig.TIME_UNIT);
         return token;
+    }
+
+    @Override
+    public void logout() {
+        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        String token = Objects.requireNonNull(requestAttributes).getRequest().getHeader("token");
+        redisComponent.deleteForObject(token);
     }
 }

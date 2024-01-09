@@ -136,9 +136,43 @@ CREATE TABLE `bci_code`(
                            `file_name` VARCHAR(255) NOT NULL comment '文件名',
                            `md5` VARCHAR(255) NOT NULL COMMENT '文件md5码',
                            `create_time` TIMESTAMP NOT NULL default CURRENT_TIMESTAMP comment '上传时间',
-                           `status` TINYINT NOT NULL default 0 comment '状态： 0代表待执行, 1代表运行中, 2代表运行成功, 3代表运行错误',
                            `show_status` TINYINT NOT NULL default 1 comment '是否展示： 0代表不展示, 1代表展示',
                            primary key (`id`)
 );
 ALTER TABLE
     `bci_code` comment '代码表';
+
+CREATE TABLE `bci_task`(
+                           `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                           `user_id` INT NOT NULL comment '用户id',
+                           `team_id` INT NOT NULL comment '队伍id',
+                           `code_id` INT NOT NULL comment '代码id',
+                           `paradigm_id` INT NOT NULL comment '范式id',
+                           `dataset` TINYINT NOT NULL comment '数据集 0代表A榜， 1代表B榜',
+                           `container_id` INT default NULL comment '容器id',
+                           `status` TINYINT NOT NULL default 0 comment '状态： 0:待运行 1:运行中 2:运行成功 3:运行失败',
+                           `create_time` TIMESTAMP NOT NULL default CURRENT_TIMESTAMP comment '创建时间',
+                           `score` float default NULL comment '得分',
+                           `compute_node_ip` VARCHAR(25) NOT NULL comment '计算节点',
+                           `show_status` TINYINT NOT NULL default 1 comment '逻辑删除'
+);
+ALTER TABLE
+    `bci_task` comment '任务表';
+
+CREATE TABLE `bci_compute_resource`(
+                                       `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                                       `ip` VARCHAR(15) NOT NULL,
+                                       `running_tasks` INT NOT NULL,
+                                       `max_tasks` TINYINT NOT NULL,
+                                       `status` TINYINT NOT NULL
+);
+ALTER TABLE
+    `bci_compute_resource` comment '计算资源表';
+
+CREATE TABLE `bci_container_log`(
+                                    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                                    `task_id` INT NOT NULL,
+                                    `content` TEXT NOT NULL
+);
+ALTER TABLE
+    `bci_container_log` comment '容器日志表';

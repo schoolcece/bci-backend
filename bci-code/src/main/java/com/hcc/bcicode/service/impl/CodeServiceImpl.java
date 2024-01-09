@@ -2,6 +2,7 @@ package com.hcc.bcicode.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hcc.bcicode.mapper.CodeMapper;
 import com.hcc.bcicode.service.CodeService;
@@ -11,6 +12,7 @@ import com.hcc.common.enums.ErrorCodeEnum;
 import com.hcc.common.exception.RTException;
 import com.hcc.common.model.bo.UserInfoBO;
 import com.hcc.common.model.entity.CodeDO;
+import com.hcc.common.model.vo.CodeVO;
 import com.hcc.common.utils.UserUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -23,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Description: service层 代码管理实现
@@ -84,6 +87,14 @@ public class CodeServiceImpl extends ServiceImpl<CodeMapper, CodeDO> implements 
         } catch (IOException e) {
             throw new RTException(ErrorCodeEnum.SYSTEM_ERROR.getCode(), ErrorCodeEnum.SYSTEM_ERROR.getMsg());
         }
+    }
+
+    @Override
+    public List<CodeVO> listCode(int paradigmId, Integer current) {
+        UserInfoBO user = UserUtils.getUser();
+        return codeMapper
+                .selectPageByUserId(paradigmId, user.getUserId(), (current-1)*CustomConstants.PageSize.CODE_SIZE, CustomConstants.PageSize.CODE_SIZE);
+
     }
 
     private void checkPermissions(UserInfoBO user, int paradigmId) {

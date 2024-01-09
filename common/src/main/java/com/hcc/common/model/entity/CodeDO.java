@@ -2,6 +2,7 @@ package com.hcc.common.model.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Builder;
 import lombok.Data;
@@ -57,10 +58,11 @@ public class CodeDO {
     /**
      * 状态： 0 代表待执行， 1 代表运行中， 2 代表运行成功， 3 代表运行失败
      */
-    private int status;
+//    private int status;
 
     /**
      * 是否展示: 0 代表不展示， 2 代表展示
      */
+    @TableLogic(value = "1", delval = "0")
     private int showStatus;
 }

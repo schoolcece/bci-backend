@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -27,6 +28,18 @@ public interface BCIConfig {
     @Data
     class CodeConfig {
         private String url;
+    }
+
+    @Configuration
+    @ConfigurationProperties("bci.task")
+    @Data
+    class TaskConfig {
+        private Map<Integer, Long> maxTime;
+        private Map<Integer, Integer> maxExec;
+        private String cmd;
+        private String updateScoreURl;
+        private String codePath;
+        private String dataPath;
     }
 
 

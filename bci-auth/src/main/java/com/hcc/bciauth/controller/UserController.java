@@ -53,4 +53,13 @@ public class UserController {
     public R getInfo() {
         return R.ok().put("data", UserUtils.getUser());
     }
+
+    /**
+     * 用户注销接口
+     * @return
+     */
+    public R logout(){
+        userService.logout();
+        return R.ok();
+    }
 }

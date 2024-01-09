@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--    bci_compute_resource-->
+<!--    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,-->
+<!--    `ip` VARCHAR(15) NOT NULL,-->
+<!--    `running_tasks` INT NOT NULL,-->
+<!--    `max_tasks` TINYINT NOT NULL,-->
+<!--    `status` TINYINT NOT NULL-->
+
+
+<!--bci_task-->
+<!--        `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,-->
+<!--        `user_id` INT NOT NULL comment '用户id',-->
+<!--        `team_id` INT NOT NULL comment '队伍id',-->
+<!--        `code_id` INT NOT NULL comment '代码id',-->
+<!--        `paradigm_id` INT NOT NULL comment '范式id',-->
+<!--        `dataset` TINYINT NOT NULL comment '数据集 0代表A榜， 1代表B榜',-->
+<!--        `container_id` INT default NULL comment '容器id',-->
+<!--        `status` TINYINT NOT NULL default 0 comment '状态： 0:待运行 1:运行中 2:运行成功 3:运行失败',-->
+<!--        `create_time` TIMESTAMP NOT NULL default CURRENT_TIMESTAMP comment '创建时间',-->
+<!--        `score` float default NULL comment '得分',-->
+<!--        `compute_node_ip` VARCHAR(25) NOT NULL comment '计算节点',-->
+<!--        `show_status` TINYINT NOT NULL default 1 comment '逻辑删除'-->
+
+<mapper namespace="com.hcc.bcitask.mapper.CommonMapper">
+    <insert id="insertTask">
+        insert into bci_task (user_id, team_id, code_id, paradigm_id, dataset, compute_node_ip)
+        values (#{taskDO.user_id}, #{taskDO.team_id}, #{taskDO.paradigm_id}, #{taskDO.dataset}, #{taskDO.computeNodeIp})
+    </insert>
+    <insert id="saveLog">
+        insert into bci_container_log (task_id, content)
+        values (#{containerLogDO.taskId}, #{containerLogDO.content})
+    </insert>
+    <update id="updateScoreById">
+        update bci_task set score = #{score}
+        where id = #{taskId}
+    </update>
+    <update id="updateTaskById">
+        update bci_task set container_id = #{taskDO.containerId}, status = #{taskDO.status}
+        where id = #{taskDO.id}
+    </update>
+    <update id="updateStatusById">
+        update bci_task set status = #{task.status}
+        where id = #{task.id}
+    </update>
+    <update id="usingNodeByIp">
+        UPDATE  bci_compute_resource SET running_tasks = running_tasks+1 where ip = #{computeNodeIp}
+    </update>
+    <update id="usedNodeByIp">
+        UPDATE  bci_compute_resource SET running_tasks = running_tasks-1 where ip = #{computeNodeIp}
+    </update>
+    <delete id="deleteTaskById">
+        update bci_task set show_status = 0
+        where id = #{taskId}
+    </delete>
+
+    <select id="selectNodes" resultType="com.hcc.common.model.entity.ComputeNodeDO">
+        select id, ip, running_tasks, max_tasks
+        from bci_compute_resource
+    </select>
+    <select id="selectTaskById" resultType="com.hcc.common.model.entity.TaskDO">
+        select *
+        from bci_task
+        where show_status = 1 and id = #{taskId}
+    </select>
+</mapper>

@@ -12,7 +12,11 @@ public enum ErrorCodeEnum {
     // 1.1 未知异常
     UN_KNOW_EXCEPTION(100500, "系统未知异常， 请联系管理员解决！"),
     // 1.2 代码上传io异常
-    SYSTEM_ERROR(100501, "服务器资源异常， 请联系管理员解决"),
+    SYSTEM_ERROR(100501, "服务器资源异常， 请联系管理员解决！"),
+    // 1.3 暂无计算资源
+    NO_COMPUTE_NODE(100502, "暂无计算资源, 请稍后再试！"),
+    // 1.4 计算节点异常
+    COMPUTE_RESOURCE_FAILD(100503, "计算节点异常，请联系管理员！"),
 
     // 2. 客户端异常
     // 2.1 请求参数异常
@@ -29,7 +33,13 @@ public enum ErrorCodeEnum {
     // 2.6 队伍人数超上限
     TEAM_MEMBER_OVER(100406, "队伍人数超上限"),
     // 2.7 当前时刻不在比赛期间
-    EVENT_NOT_IN_TIME(100407, "当前时刻不在比赛期间");
+    EVENT_NOT_IN_TIME(100407, "当前时刻不在比赛期间"),
+    // 2.8 有任务正运行
+    HAS_TASK_RUNNING(100408, "有任务正在执行， 请等待执行完毕"),
+    // 2.9 今日任务数达上限
+    COMMIT_OVER_TIMES(100409,"今日提交次数超过限制"),
+    // 2.10 代码异常
+    CODE_NOT_EXIST(100410, "代码解析失败，请检查代码格式");
 
 
 

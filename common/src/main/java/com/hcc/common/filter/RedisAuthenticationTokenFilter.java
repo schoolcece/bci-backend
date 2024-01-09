@@ -35,7 +35,7 @@ public class RedisAuthenticationTokenFilter extends OncePerRequestFilter {
 
         // 2. 如果请求携带内部访问token
         if (token.equals(CustomConstants.InnerToken.TOKEN)){
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken("innerVisit", null, null);
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(UserInfoBO.builder().username("admin").isAdmin(true).build(), null, null);
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             filterChain.doFilter(request, response);
             return;

@@ -4,10 +4,7 @@ import com.hcc.bcicode.service.CodeService;
 import com.hcc.common.annotation.Loggable;
 import com.hcc.common.model.R;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -23,11 +20,29 @@ public class CodeController {
     @Autowired
     private CodeService codeService;
 
+    /**
+     * 代码上传接口
+     * @param paradigmId
+     * @param file
+     * @return
+     */
     @PostMapping("/uploadCode")
     @Loggable("代码上传")
     public R uploadCode(@RequestParam("paradigmId") int paradigmId, @RequestParam("file")MultipartFile file) {
         codeService.uploadCode(paradigmId, file);
         return R.ok();
+    }
+
+    /**
+     * 代码查询接口
+     * @param paradigmId
+     * @param current
+     * @return
+     */
+    @GetMapping("/listCode")
+    public R list(@RequestParam int paradigmId,
+                  @RequestParam(value = "current", defaultValue = "1") Integer current){
+        return R.ok().put("data", codeService.listCode(paradigmId, current));
     }
 
 }

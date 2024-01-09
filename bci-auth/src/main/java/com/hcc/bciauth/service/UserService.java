@@ -13,4 +13,9 @@ public interface UserService extends IService<UserDO> {
      * 用户登录服务
      */
     String login(LoginParam loginInfoDTO);
+
+    /**
+     * 用户注销接口
+     */
+    void logout();
 }

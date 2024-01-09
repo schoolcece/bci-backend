@@ -32,6 +32,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorize ->
                 authorize.requestMatchers("/auth/login").anonymous()
                         .requestMatchers("/auth/register").anonymous()
+                        .requestMatchers("/code/uploadCode").anonymous()
                         .anyRequest().authenticated());
         http.csrf(AbstractHttpConfigurer::disable);
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

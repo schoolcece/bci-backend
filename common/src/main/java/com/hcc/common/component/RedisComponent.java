@@ -57,4 +57,16 @@ public class RedisComponent {
     public void deleteForObject(String key) {
         Boolean delete = objectRedisTemplate.delete(key);
     }
+
+    public boolean setIfAbsent(String key, Object value, long timeout, TimeUnit timeUnit) {
+        return Boolean.TRUE.equals(objectRedisTemplate.opsForValue().setIfAbsent(key, value, timeout, timeUnit));
+    }
+
+    public Long getExpireForObject(String countKey, TimeUnit seconds) {
+        return objectRedisTemplate.getExpire(countKey, seconds);
+    }
+
+    public void increment(String countKey) {
+        objectRedisTemplate.opsForValue().increment(countKey);
+    }
 }

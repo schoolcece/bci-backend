@@ -126,7 +126,7 @@ public interface CustomConstants {
     /**
      * 代码状态
      */
-    class BCICodeStatus {
+    class BCITaskStatus {
         public static final int PENDING = 0;
         public static final int PROCESSING = 1;
         public static final int SUCCESS = 2;
@@ -139,5 +139,9 @@ public interface CustomConstants {
     class TokenConfig {
         public static final long TIMEOUT = 1;
         public static final TimeUnit TIME_UNIT = TimeUnit.HOURS;
+    }
+
+    class PageSize {
+        public static final int CODE_SIZE = 5;
     }
 }
