@@ -24,8 +24,8 @@
 
 <mapper namespace="com.hcc.bcitask.mapper.CommonMapper">
     <insert id="insertTask">
-        insert into bci_task (user_id, team_id, code_id, paradigm_id, dataset, compute_node_ip)
-        values (#{taskDO.user_id}, #{taskDO.team_id}, #{taskDO.paradigm_id}, #{taskDO.dataset}, #{taskDO.computeNodeIp})
+        insert into bci_task (user_id, team_id, code_id, paradigm_id, task_name, dataset, compute_node_ip)
+        values (#{taskDO.userId}, #{taskDO.teamId}, #{taskDO.codeId}, #{taskDO.paradigmId}, #{taskDO.taskName}, #{taskDO.dataset}, #{taskDO.computeNodeIp})
     </insert>
     <insert id="saveLog">
         insert into bci_container_log (task_id, content)
@@ -55,12 +55,23 @@
     </delete>
 
     <select id="selectNodes" resultType="com.hcc.common.model.entity.ComputeNodeDO">
-        select id, ip, running_tasks, max_tasks
+        select id, ip, running_tasks, max_tasks, status
         from bci_compute_resource
     </select>
     <select id="selectTaskById" resultType="com.hcc.common.model.entity.TaskDO">
-        select *
+        select id, user_id, team_id, code_id, paradigm_id, task_name, dataset, container_id, status, create_time, score, compute_node_ip, show_status
         from bci_task
         where show_status = 1 and id = #{taskId}
+    </select>
+    <select id="selectTaskByUserIdAndParadigm" resultType="com.hcc.common.model.vo.TaskVO">
+        select id, task_name, status, create_time
+        from bci_task
+        where show_status = 1 and user_id = #{userId} and paradigm_id = #{paradigm}
+        limit #{index}, #{pageSize}
+    </select>
+    <select id="selectCount" resultType="java.lang.Long">
+        select count(*)
+        from bci_task
+        where show_status = 1 and user_id = #{userId} and paradigm_id = #{paradigm}
     </select>
 </mapper>

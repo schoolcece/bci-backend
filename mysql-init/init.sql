@@ -148,6 +148,7 @@ CREATE TABLE `bci_task`(
                            `team_id` INT NOT NULL comment '队伍id',
                            `code_id` INT NOT NULL comment '代码id',
                            `paradigm_id` INT NOT NULL comment '范式id',
+                           `task_name` VARCHAR(255) NOT NULL comment '任务名称',
                            `dataset` TINYINT NOT NULL comment '数据集 0代表A榜， 1代表B榜',
                            `container_id` INT default NULL comment '容器id',
                            `status` TINYINT NOT NULL default 0 comment '状态： 0:待运行 1:运行中 2:运行成功 3:运行失败',

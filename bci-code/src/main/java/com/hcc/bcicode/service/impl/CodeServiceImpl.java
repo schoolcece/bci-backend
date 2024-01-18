@@ -11,6 +11,7 @@ import com.hcc.common.constant.CustomConstants;
 import com.hcc.common.enums.ErrorCodeEnum;
 import com.hcc.common.exception.RTException;
 import com.hcc.common.model.bo.UserInfoBO;
+import com.hcc.common.model.dto.CodeDTO;
 import com.hcc.common.model.entity.CodeDO;
 import com.hcc.common.model.vo.CodeVO;
 import com.hcc.common.utils.UserUtils;
@@ -90,11 +91,19 @@ public class CodeServiceImpl extends ServiceImpl<CodeMapper, CodeDO> implements 
     }
 
     @Override
-    public List<CodeVO> listCode(int paradigmId, Integer current) {
+    public CodeDTO listCode(int paradigmId, int current) {
         UserInfoBO user = UserUtils.getUser();
-        return codeMapper
-                .selectPageByUserId(paradigmId, user.getUserId(), (current-1)*CustomConstants.PageSize.CODE_SIZE, CustomConstants.PageSize.CODE_SIZE);
+        return CodeDTO.builder()
+                .codes(codeMapper
+                        .selectPageByUserId(paradigmId, user.getUserId(), (current-1)*CustomConstants.PageSize.CODE_SIZE, CustomConstants.PageSize.CODE_SIZE))
+                .total(codeMapper.selectCount(new QueryWrapper<CodeDO>().eq("paradigm_id", paradigmId).eq("user_id", user.getUserId()).eq("show_status", 1)))
+                .build();
 
+    }
+
+    @Override
+    public String getCodeUrlById(int codeId) {
+        return codeMapper.getCodeUrlById(codeId);
     }
 
     private void checkPermissions(UserInfoBO user, int paradigmId) {

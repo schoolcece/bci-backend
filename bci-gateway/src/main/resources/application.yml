@@ -8,6 +8,19 @@ spring:
             - Path=/auth/**
           filters:
             - RewritePath=/auth/(?<segment>/?.*), /auth/$\{segment}
+        - id: auth_route
+          uri: http://localhost:8080
+          predicates:
+            - Path=/team/**
+          filters:
+            - RewritePath=/team/(?<segment>/?.*), /team/$\{segment}
+
+        - id: code_route
+          uri: http://localhost:8081
+          predicates:
+            - Path=/code/**
+          filters:
+            - RewritePath=/code/(?<segment>/?.*), /code/$\{segment}
 
         - id: competition_route
           uri: http://localhost:8082
@@ -22,6 +35,13 @@ spring:
             - Path=/paradigm/**
           filters:
             - RewritePath=/paradigm/(?<segment>/?.*), /paradigm/$\{segment}
+
+        - id: task_route
+          uri: http://localhost:8083
+          predicates:
+            - Path=/task/**
+          filters:
+            - RewritePath=/task/(?<segment>/?.*), /task/$\{segment}
 
 
 server:

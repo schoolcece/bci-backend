@@ -15,12 +15,15 @@ import com.hcc.common.component.RedisComponent;
 import com.hcc.common.enums.ErrorCodeEnum;
 import com.hcc.common.exception.RTException;
 import com.hcc.common.model.bo.UserInfoBO;
+import com.hcc.common.model.vo.TeamInfoVO;
+import com.hcc.common.model.vo.UserInfoVO;
 import com.hcc.common.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -173,7 +176,7 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
 
         // 3. todo：逻辑删除该用户的所有历史提交代码和任务（涉及到远程调用，需要考虑整体操作的原子性）
 
-        // 4. 更新登录态缓存
+        // 4. 更新登录态缓存 (队伍队员权限清除)
         user.getTeamInfoMap().remove(event);
         redisComponent.setObject(redisComponent.getString(String.valueOf(user.getUserId())), user, CustomConstants.TokenConfig.TIMEOUT, CustomConstants.TokenConfig.TIME_UNIT);
         redisComponent.expireForString(String.valueOf(user.getUserId()), CustomConstants.TokenConfig.TIMEOUT, CustomConstants.TokenConfig.TIME_UNIT);
@@ -235,9 +238,44 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
         teamMapper.insertApplicationIfNotExist(applicationDO);
 
         // 4. 更新登录态缓存
-        user.getPermissions().putIfAbsent(event, CustomConstants.ApplicationStatus.PENDING);
+        user.getPermissions().putIfAbsent(paradigm, CustomConstants.ApplicationStatus.PENDING);
         redisComponent.setObject(redisComponent.getString(String.valueOf(user.getUserId())), user, CustomConstants.TokenConfig.TIMEOUT, CustomConstants.TokenConfig.TIME_UNIT);
         redisComponent.expireForString(String.valueOf(user.getUserId()), CustomConstants.TokenConfig.TIMEOUT, CustomConstants.TokenConfig.TIME_UNIT);
+    }
+
+    @Override
+    public List<TeamInfoVO> getAllTeamInfos(int event, int curPage, String teamName) {
+        return teamMapper.selectByEventLikeTeamName(event, teamName, (curPage-1)*CustomConstants.PageSize.TEAM_SIZE, CustomConstants.PageSize.TEAM_SIZE);
+    }
+
+    @Override
+    public List<UserInfoVO> getTeamMembers(int eventId) {
+        UserInfoBO user = UserUtils.getUser();
+        UserInfoBO.TeamInfo teamInfo = user.getTeamInfoMap().get(eventId);
+        return userTeamMapper.selectTeamMembersByTeamId(teamInfo.getTeamId());
+    }
+
+    @Override
+    public List<TeamInfoVO> getTeamInfo(int event, int paradigm) {
+        UserInfoBO user = UserUtils.getUser();
+        if (!user.isAdmin() && CustomConstants.ParadigmLeader.LEADER != user.getPermissions().getOrDefault(paradigm, CustomConstants.UserRole.NORMAL_USER)) {
+            throw new RTException(ErrorCodeEnum.NO_PERMISSION.getCode(), ErrorCodeEnum.NO_PERMISSION.getMsg());
+        }
+        return teamMapper.getTeamInfo(event, paradigm);
+    }
+
+    @Override
+    public List<UserInfoVO> getTeamMembersById(int teamId) {
+        return userTeamMapper.selectTeamMembersByTeamId(teamId);
+    }
+
+    @Override
+    public void auditTeam(int teamId, int paradigm, int status) {
+        UserInfoBO user = UserUtils.getUser();
+        if (!user.isAdmin() && CustomConstants.ParadigmLeader.LEADER != user.getPermissions().getOrDefault(paradigm, CustomConstants.UserRole.NORMAL_USER)) {
+            throw new RTException(ErrorCodeEnum.NO_PERMISSION.getCode(), ErrorCodeEnum.NO_PERMISSION.getMsg());
+        }
+        teamMapper.updateAppStatusByTeamId(teamId, paradigm, status);
     }
 
     private void checkTeamMemberOver(int teamId) {
@@ -248,7 +286,8 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
     }
 
     private void checkTeamNameUnique(String teamName, int eventId) {
-        Long count = teamMapper.selectCount(new QueryWrapper<TeamDO>().eq("team_name", teamName).eq("event_id", eventId));
+        Long count = teamMapper.selectCount(new QueryWrapper<TeamDO>().eq("team_name", teamName)
+                .eq("event_id", eventId).eq("status", CustomConstants.TeamStatus.NORMAL));
         if (count > 0) {
             throw new RTException(ErrorCodeEnum.TEAM_NAME_EXIST.getCode(), ErrorCodeEnum.TEAM_NAME_EXIST.getMsg());
         }

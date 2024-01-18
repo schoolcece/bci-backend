@@ -3,6 +3,10 @@ package com.hcc.bciauth.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.hcc.common.model.entity.TeamDO;
 import com.hcc.common.model.param.CreateTeamParam;
+import com.hcc.common.model.vo.TeamInfoVO;
+import com.hcc.common.model.vo.UserInfoVO;
+
+import java.util.List;
 
 /**
  * Description: 服务层 队伍相关操作
@@ -55,4 +59,14 @@ public interface TeamService extends IService<TeamDO> {
      * @param paradigm
      */
     void registerForCompetition(int event, int paradigm);
+
+    List<TeamInfoVO> getAllTeamInfos(int event, int curPage, String teamName);
+
+    List<UserInfoVO> getTeamMembers(int eventId);
+
+    List<TeamInfoVO> getTeamInfo(int event, int paradigm);
+
+    List<UserInfoVO> getTeamMembersById(int teamId);
+
+    void auditTeam(int teamId, int paradigm, int status);
 }

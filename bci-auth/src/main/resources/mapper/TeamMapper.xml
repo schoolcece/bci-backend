@@ -11,7 +11,12 @@
     <update id="updateStatusByTeamId">
         update bci_team
         set status = #{disband}
-        where team_id = #{teamId}
+        where id = #{teamId}
+    </update>
+    <update id="updateAppStatusByTeamId">
+        update bci_application
+        set status = #{status}
+        where team_id = #{teamId} and paradigm_id = #{paradigm}
     </update>
 
     <select id="selectTeamInfoByUserId" resultType="com.hcc.common.model.dto.TeamInfoDTO">
@@ -24,5 +29,17 @@
         select paradigm_id, status
         from bci_application
         where team_id = #{teamId}
+    </select>
+
+    <select id="selectByEventLikeTeamName" resultType="com.hcc.common.model.vo.TeamInfoVO">
+        select id, team_name, university
+        from bci_team
+        where event_id = #{event} and team_name like CONCAT('%', #{teamName}, '%') and status = 0
+        limit #{index}, #{pageSize}
+    </select>
+    <select id="getTeamInfo" resultType="com.hcc.common.model.vo.TeamInfoVO">
+        select t.id, t.team_name, t.university, t.instructor
+        from bci_team t join bci_application a on t.id = a.team_id
+        where t.event_id = #{event} and a.status = 0 and a.paradigm_id = #{paradigm} and t.status = 0
     </select>
 </mapper>

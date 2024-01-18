@@ -1,5 +1,10 @@
 package com.hcc.bcitask.service;
 
+import com.hcc.common.model.dto.TaskDTO;
+import com.hcc.common.model.vo.TaskVO;
+
+import java.util.List;
+
 /**
  * Description: service层接口 任务相关操作
  *
@@ -7,11 +12,13 @@ package com.hcc.bcitask.service;
  * @Date: 2024/1/9
  */
 public interface TaskService {
-    void createTask(int paradigmId, int codeId);
+    void createTask(int paradigmId, int codeId, String taskName);
 
     void execTask(int taskId);
 
     void deleteTaskById(int taskId);
 
     void updateScoreById(int taskId, float score);
+
+    TaskDTO getTask(int paradigm, int curPage);
 }

@@ -19,9 +19,11 @@ import com.hcc.common.enums.ErrorCodeEnum;
 import com.hcc.common.exception.RTException;
 import com.hcc.common.model.bo.UserInfoBO;
 import com.hcc.common.model.dto.ParadigmDTO;
+import com.hcc.common.model.dto.TaskDTO;
 import com.hcc.common.model.entity.ComputeNodeDO;
 import com.hcc.common.model.entity.ContainerLogDO;
 import com.hcc.common.model.entity.TaskDO;
+import com.hcc.common.model.vo.TaskVO;
 import com.hcc.common.utils.UserUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +67,7 @@ public class TaskServiceImpl implements TaskService {
     private BCIConfig.TaskConfig taskConfig;
 
     @Override
-    public void createTask(int paradigmId, int codeId) {
+    public void createTask(int paradigmId, int codeId, String taskName) {
         UserInfoBO user = UserUtils.getUser();
         //1. 鉴权
         checkPermissions(user, paradigmId);
@@ -82,6 +84,7 @@ public class TaskServiceImpl implements TaskService {
                 .codeId(codeId)
                 .dataset(new Date(System.currentTimeMillis()).before(paradigmInfo.getChangeTime()) ? 0 : 1)
                 .computeNodeIp(nodeIp)
+                .taskName(taskName)
                 .build();
         commonMapper.insertTask(taskDO);
     }
@@ -101,7 +104,7 @@ public class TaskServiceImpl implements TaskService {
         String taskingKey = countKey + "on";
         checkCommitTimes(countKey, taskDO.getParadigmId());
         //4. 检查该用户所在队伍是否有正在运行的任务
-        if (!redisComponent.setIfAbsent(taskingKey, "", taskConfig.getMaxTime().get(taskDO.getParadigmId())+60, TimeUnit.SECONDS)) {
+        if (!redisComponent.setIfAbsent(taskingKey, 1L, taskConfig.getMaxTime().get(taskDO.getParadigmId())+60, TimeUnit.SECONDS)) {
             throw new RTException(ErrorCodeEnum.HAS_TASK_RUNNING.getCode(), ErrorCodeEnum.HAS_TASK_RUNNING.getMsg());
         }
         //5. 获取代码信息
@@ -170,6 +173,15 @@ public class TaskServiceImpl implements TaskService {
         commonMapper.updateScoreById(taskId, score);
     }
 
+    @Override
+    public TaskDTO getTask(int paradigm, int curPage) {
+        UserInfoBO user = UserUtils.getUser();
+        return TaskDTO.builder()
+                .tasks(commonMapper.selectTaskByUserIdAndParadigm(user.getUserId(), paradigm, (curPage-1)*CustomConstants.PageSize.TASK_SIZE, CustomConstants.PageSize.TASK_SIZE))
+                .total(commonMapper.selectCount(user.getUserId(), paradigm))
+                .build();
+    }
+
     private void checkPermissions(UserInfoBO user, int paradigmId) {
         if (user.isAdmin()) {
             return;
@@ -222,7 +234,7 @@ public class TaskServiceImpl implements TaskService {
         //1.2 当前时间与晚上十二点的秒差
         Long timeOut = (calendar.getTimeInMillis()-System.currentTimeMillis()) / 1000;
         redisComponent.setIfAbsent(countKey,0L, timeOut, TimeUnit.SECONDS);
-        Long count = (Long) redisComponent.getObject(countKey);
+        Long count = redisComponent.getLong(countKey);
         if(count >= taskConfig.getMaxExec().get(paradigmId)){
             throw new RTException(ErrorCodeEnum.COMMIT_OVER_TIMES.getCode(), ErrorCodeEnum.COMMIT_OVER_TIMES.getMsg());
         }
@@ -264,7 +276,7 @@ public class TaskServiceImpl implements TaskService {
                         @Override
                         public void onNext(Frame item) {
                             if (item.toString().contains("运行成功")){
-                                long expire = redisComponent.getExpireForObject(countKey, SECONDS);
+                                long expire = redisComponent.getExpireForLong(countKey, SECONDS);
                                 if (expire>=0){
                                     redisComponent.increment(countKey);
                                 }
@@ -317,7 +329,7 @@ public class TaskServiceImpl implements TaskService {
         }
         //移除队伍正运行任务的标志
         try {
-            redisComponent.deleteForObject(taskingKey);
+            redisComponent.deleteForLong(taskingKey);
         } catch (Exception ee) {
             logger.error("移除队伍正运行任务的标志失败, 原因：{}", ee.getLocalizedMessage());
         }

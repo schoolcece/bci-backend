@@ -22,6 +22,9 @@ public class RedisComponent {
     @Autowired
     RedisTemplate<String, Object> objectRedisTemplate;
 
+    @Autowired
+    RedisTemplate<String, Long> longRedisTemplate;
+
     public void setString(String key, String value) {
         stringRedisTemplate.opsForValue().set(key, value);
     }
@@ -46,6 +49,10 @@ public class RedisComponent {
         return stringRedisTemplate.opsForValue().get(key);
     }
 
+    public Long getLong(String key) {
+        return longRedisTemplate.opsForValue().get(key);
+    }
+
     public void expireForString(String key, long timeout, TimeUnit timeUnit) {
         stringRedisTemplate.expire(key, timeout, timeUnit);
     }
@@ -58,15 +65,19 @@ public class RedisComponent {
         Boolean delete = objectRedisTemplate.delete(key);
     }
 
-    public boolean setIfAbsent(String key, Object value, long timeout, TimeUnit timeUnit) {
-        return Boolean.TRUE.equals(objectRedisTemplate.opsForValue().setIfAbsent(key, value, timeout, timeUnit));
+    public void deleteForLong(String key) {
+        Boolean delete = longRedisTemplate.delete(key);
     }
 
-    public Long getExpireForObject(String countKey, TimeUnit seconds) {
-        return objectRedisTemplate.getExpire(countKey, seconds);
+    public boolean setIfAbsent(String key, Long value, long timeout, TimeUnit timeUnit) {
+        return Boolean.TRUE.equals(longRedisTemplate.opsForValue().setIfAbsent(key, value, timeout, timeUnit));
+    }
+
+    public Long getExpireForLong(String countKey, TimeUnit seconds) {
+        return longRedisTemplate.getExpire(countKey, seconds);
     }
 
     public void increment(String countKey) {
-        objectRedisTemplate.opsForValue().increment(countKey);
+        longRedisTemplate.opsForValue().increment(countKey);
     }
 }

@@ -27,8 +27,8 @@ public class TaskController {
      */
     @Loggable("创建任务")
     @PostMapping("/createTask")
-    public R createTask(@RequestParam("paradigmId") int paradigmId, @RequestParam("codeId") int codeId) {
-        taskService.createTask(paradigmId, codeId);
+    public R createTask(@RequestParam("paradigmId") int paradigmId, @RequestParam("codeId") int codeId, @RequestParam("taskName") String taskName) {
+        taskService.createTask(paradigmId, codeId, taskName);
         return R.ok();
     }
 
@@ -45,10 +45,21 @@ public class TaskController {
     }
 
     /**
+     * 获取任务接口
+     * @param paradigm
+     * @return
+     */
+    @GetMapping("/getTask")
+    public R getTask(@RequestParam("paradigm") int paradigm, @RequestParam(value = "current", defaultValue = "1") int curPage) {
+        return R.ok().put("data", taskService.getTask(paradigm, curPage));
+    }
+
+    /**
      * 根据任务id逻辑删除任务接口
      * @param taskId
      * @return
      */
+    @Loggable("删除任务")
     @PostMapping("/deleteTaskById")
     public R deleteTaskById(@RequestParam("taskId") int taskId) {
         taskService.deleteTaskById(taskId);
@@ -71,13 +82,13 @@ public class TaskController {
     /**
      * 获取指定队伍成绩记录接口
      * @param teamId
-     * @param type
+     * @param paradigm
      * @param dataset
      * @param curPage
      * @return
      */
     @GetMapping("/record")
-    public R getScoreRecord(@RequestParam("teamId") int teamId, @RequestParam("paradigm") int type,
+    public R getScoreRecord(@RequestParam("teamId") int teamId, @RequestParam("paradigm") int paradigm,
                             @RequestParam("dataset") int dataset, @RequestParam(value = "curPage", defaultValue = "1") int curPage) {
         return R.ok();
     }

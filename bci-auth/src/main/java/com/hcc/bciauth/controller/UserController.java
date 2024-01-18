@@ -58,6 +58,7 @@ public class UserController {
      * 用户注销接口
      * @return
      */
+    @PostMapping("/logout")
     public R logout(){
         userService.logout();
         return R.ok();

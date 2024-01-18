@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hcc.bcicompetition.mapper.ParadigmMapper">
+    <select id="selectByParadigmId" resultType="com.hcc.common.model.dto.ParadigmDTO">
+        select paradigm_name, event_id, a_data, b_data, change_time, image
+        from bci_paradigm
+        where id = #{paradigmId}
+    </select>
+</mapper>

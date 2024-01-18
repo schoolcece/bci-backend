@@ -12,4 +12,9 @@
         set role = #{role}
         where userId = #{userId} and teamId = #{teamId} and status = #{approved}
     </update>
+    <select id="selectTeamMembersByTeamId" resultType="com.hcc.common.model.vo.UserInfoVO">
+        select u.id userId, u.username userName, u.mobile mobile, u.university university, ut.role, ut.status
+        from bci_user u join bci_user_team ut on u.id = ut.user_id
+        where ut.team_id = #{teamId}
+    </select>
 </mapper>

@@ -64,5 +64,5 @@ public class CodeDO {
      * 是否展示: 0 代表不展示， 2 代表展示
      */
     @TableLogic(value = "1", delval = "0")
-    private int showStatus;
+    private Integer showStatus;
 }

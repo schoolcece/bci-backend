@@ -17,4 +17,6 @@ import java.util.List;
 @Mapper
 public interface CodeMapper extends BaseMapper<CodeDO> {
     List<CodeVO> selectPageByUserId(@Param("paradigmId")int paradigmId, @Param("userId")int userId, @Param("index")Integer index, @Param("pageNum")int pageNum);
+
+    String getCodeUrlById(@Param("codeId")int codeId);
 }

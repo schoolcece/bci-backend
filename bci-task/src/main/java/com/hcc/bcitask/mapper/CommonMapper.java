@@ -3,6 +3,7 @@ package com.hcc.bcitask.mapper;
 import com.hcc.common.model.entity.ComputeNodeDO;
 import com.hcc.common.model.entity.ContainerLogDO;
 import com.hcc.common.model.entity.TaskDO;
+import com.hcc.common.model.vo.TaskVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -36,4 +37,8 @@ public interface CommonMapper {
     void usingNodeByIp(@Param("computeNodeIp")String computeNodeIp);
 
     void usedNodeByIp(@Param("computeNodeIp")String computeNodeIp);
+
+    List<TaskVO> selectTaskByUserIdAndParadigm(@Param("userId")int userId, @Param("paradigm")int paradigm, @Param("index")int index, @Param("pageSize")int pageSize);
+
+    long selectCount(@Param("userId")int userId, @Param("paradigm")int paradigm);
 }

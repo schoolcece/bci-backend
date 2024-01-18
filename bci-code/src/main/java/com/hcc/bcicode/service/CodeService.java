@@ -1,6 +1,7 @@
 package com.hcc.bcicode.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.hcc.common.model.dto.CodeDTO;
 import com.hcc.common.model.entity.CodeDO;
 import com.hcc.common.model.vo.CodeVO;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,5 +23,7 @@ public interface CodeService extends IService<CodeDO> {
      */
     void uploadCode(int paradigm, MultipartFile file);
 
-    List<CodeVO> listCode(int paradigmId, Integer current);
+    CodeDTO listCode(int paradigmId, int current);
+
+    String getCodeUrlById(int codeId);
 }

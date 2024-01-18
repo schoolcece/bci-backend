@@ -1,9 +1,11 @@
 package com.hcc.bcicompetition.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.hcc.common.model.dto.ParadigmDTO;
 import com.hcc.common.model.entity.EventDO;
 import com.hcc.common.model.entity.ParadigmDO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * Description: 范式信息mapper层
@@ -13,4 +15,5 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface ParadigmMapper extends BaseMapper<ParadigmDO> {
+    ParadigmDTO selectByParadigmId(@Param("paradigmId") int paradigmId);
 }

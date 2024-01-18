@@ -40,6 +40,11 @@ public class TaskDO {
     private int paradigmId;
 
     /**
+     * 任务名称
+     */
+    private String taskName;
+
+    /**
      * 数据集
      */
     private int dataset;
@@ -62,7 +67,7 @@ public class TaskDO {
     /**
      * 得分
      */
-    private float score;
+    private Float score;
 
     /**
      * 计算节点ip
@@ -72,5 +77,5 @@ public class TaskDO {
     /**
      * 逻辑删除 0 代表删除 1 代表展示
      */
-    private int showStatus;
+    private Integer showStatus;
 }

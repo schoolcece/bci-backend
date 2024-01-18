@@ -6,7 +6,12 @@
     <select id="selectPageByUserId" resultType="com.hcc.common.model.vo.CodeVO">
         select id, file_name, create_time
         from bci_code
-        where paradigm_id = #{paradigmId} and userId = #{userId} and show_status = 1
+        where paradigm_id = #{paradigmId} and user_id = #{userId} and show_status = 1
         limit #{index}, #{pageNum}
+    </select>
+    <select id="getCodeUrlById" resultType="java.lang.String">
+        select url
+        from bci_code
+        where id = #{codeId}
     </select>
 </mapper>

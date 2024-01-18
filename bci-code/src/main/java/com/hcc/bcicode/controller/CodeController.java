@@ -41,8 +41,18 @@ public class CodeController {
      */
     @GetMapping("/listCode")
     public R list(@RequestParam int paradigmId,
-                  @RequestParam(value = "current", defaultValue = "1") Integer current){
+                  @RequestParam(value = "current", defaultValue = "1") int current){
         return R.ok().put("data", codeService.listCode(paradigmId, current));
+    }
+
+    /**
+     * 代码路径查询接口 内部调用接口
+     * @param codeId
+     * @return
+     */
+    @GetMapping("/getCodeUrlById")
+    String getCodeUrlById(int codeId) {
+        return codeService.getCodeUrlById(codeId);
     }
 
 }

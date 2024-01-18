@@ -1,5 +1,6 @@
 package com.hcc.bcicompetition.service;
 
+import com.hcc.common.model.dto.ParadigmDTO;
 import com.hcc.common.model.vo.ParadigmVO;
 
 import java.util.List;
@@ -17,4 +18,6 @@ public interface ParadigmService {
      * @return
      */
     List<ParadigmVO> listParadigm(int eventId);
+
+    ParadigmDTO getInfoByParadigmId(int paradigmId);
 }

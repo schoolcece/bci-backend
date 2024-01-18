@@ -5,6 +5,7 @@ import com.hcc.common.model.dto.PermissionInfoDTO;
 import com.hcc.common.model.dto.TeamInfoDTO;
 import com.hcc.common.model.entity.ApplicationDO;
 import com.hcc.common.model.entity.TeamDO;
+import com.hcc.common.model.vo.TeamInfoVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -36,4 +37,10 @@ public interface TeamMapper extends BaseMapper<TeamDO> {
     void updateStatusByTeamId(@Param("teamId")int teamId, @Param("disband") int disband);
 
     void insertApplicationIfNotExist(@Param("application") ApplicationDO applicationDO);
+
+    List<TeamInfoVO> selectByEventLikeTeamName(@Param("event")int event, @Param("teamName")String teamName, @Param("index")int index, @Param("pageSize")int pageSize);
+
+    List<TeamInfoVO> getTeamInfo(@Param("event")int event, @Param("paradigm")int paradigm);
+
+    void updateAppStatusByTeamId(@Param("teamId")int teamId, @Param("paradigm")int paradigm, @Param("status")int status);
 }

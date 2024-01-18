@@ -143,5 +143,7 @@ public interface CustomConstants {
 
     class PageSize {
         public static final int CODE_SIZE = 5;
+        public static final int TEAM_SIZE = 10;
+        public static final int TASK_SIZE = 5;
     }
 }
