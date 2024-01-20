@@ -56,7 +56,7 @@ public class UserDO {
     /**
      * 状态  0：禁用   1：正常
      */
-    private int status;
+    private Integer status;
     /**
      * 角色: 0 代表普通用户， 1 代表管理员
      */

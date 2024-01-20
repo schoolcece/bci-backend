@@ -12,7 +12,7 @@ import java.util.List;
  * @Date: 2024/1/9
  */
 public interface TaskService {
-    void createTask(int paradigmId, int codeId, String taskName);
+    void createTask(int paradigmId, int codeId, String taskName, int taskType);
 
     void execTask(int taskId);
 

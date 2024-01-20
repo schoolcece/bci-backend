@@ -27,8 +27,9 @@ public class TaskController {
      */
     @Loggable("创建任务")
     @PostMapping("/createTask")
-    public R createTask(@RequestParam("paradigmId") int paradigmId, @RequestParam("codeId") int codeId, @RequestParam("taskName") String taskName) {
-        taskService.createTask(paradigmId, codeId, taskName);
+    public R createTask(@RequestParam("paradigmId") int paradigmId, @RequestParam("codeId") int codeId,
+                        @RequestParam("taskName") String taskName, @RequestParam("taskType") int taskType) {
+        taskService.createTask(paradigmId, codeId, taskName, taskType);
         return R.ok();
     }
 

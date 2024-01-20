@@ -93,7 +93,6 @@ CREATE TABLE `bci_team`(
                            `university` VARCHAR(255) NOT NULL COMMENT '学校、单位',
                            `status` TINYINT NOT NULL DEFAULT '0' COMMENT '队伍状态： 0代表正常可用， 1代表禁用， 2代表队伍解散注销',
                            `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '队伍创建时间',
-                            UNIQUE KEY unique_combination (event_id, team_name),
                            primary key (`id`)
 );
 ALTER TABLE
@@ -149,12 +148,13 @@ CREATE TABLE `bci_task`(
                            `code_id` INT NOT NULL comment '代码id',
                            `paradigm_id` INT NOT NULL comment '范式id',
                            `task_name` VARCHAR(255) NOT NULL comment '任务名称',
+                           `task_type` TINYINT NOT NULL comment '任务类型 0代表cpu任务， 1代表gpu任务',
                            `dataset` TINYINT NOT NULL comment '数据集 0代表A榜， 1代表B榜',
                            `container_id` INT default NULL comment '容器id',
                            `status` TINYINT NOT NULL default 0 comment '状态： 0:待运行 1:运行中 2:运行成功 3:运行失败',
                            `create_time` TIMESTAMP NOT NULL default CURRENT_TIMESTAMP comment '创建时间',
                            `score` float default NULL comment '得分',
-                           `compute_node_ip` VARCHAR(25) NOT NULL comment '计算节点',
+                           `compute_node_ip` VARCHAR(25) comment '计算节点',
                            `show_status` TINYINT NOT NULL default 1 comment '逻辑删除'
 );
 ALTER TABLE
@@ -162,18 +162,18 @@ ALTER TABLE
 
 CREATE TABLE `bci_compute_resource`(
                                        `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                                       `ip` VARCHAR(15) NOT NULL,
-                                       `running_tasks` INT NOT NULL,
-                                       `max_tasks` TINYINT NOT NULL,
-                                       `status` TINYINT NOT NULL
+                                       `ip` VARCHAR(15) NOT NULL comment '节点ip',
+                                       `running_tasks` INT NOT NULL comment '运行任务数',
+                                       `max_tasks` TINYINT NOT NULL comment '最大运行任务数',
+                                       `status` TINYINT NOT NULL comment '状态 0：禁用 1：可用'
 );
 ALTER TABLE
     `bci_compute_resource` comment '计算资源表';
 
 CREATE TABLE `bci_container_log`(
                                     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                                    `task_id` INT NOT NULL,
-                                    `content` TEXT NOT NULL
+                                    `task_id` INT NOT NULL comment '任务id',
+                                    `content` TEXT NOT NULL comment '日志内容'
 );
 ALTER TABLE
     `bci_container_log` comment '容器日志表';

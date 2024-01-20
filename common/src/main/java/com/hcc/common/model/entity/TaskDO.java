@@ -40,6 +40,11 @@ public class TaskDO {
     private int paradigmId;
 
     /**
+     * 任务类型
+     */
+    private int taskType;
+
+    /**
      * 任务名称
      */
     private String taskName;
