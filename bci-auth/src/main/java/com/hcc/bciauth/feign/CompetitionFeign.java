@@ -14,7 +14,7 @@ import java.util.Date;
  * @Author: hcc
  * @Date: 2023/12/12
  */
-@FeignClient(name = "bci-competition", url = "http://127.0.0.1:8082")
+@FeignClient(name = "bci-competition")
 public interface CompetitionFeign {
 
     @GetMapping("/event/inTime")

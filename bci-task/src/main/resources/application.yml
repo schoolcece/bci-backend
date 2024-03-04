@@ -1,7 +1,15 @@
-server:
-  port: 8083
-
 spring:
+  application:
+    name: bci-task
+  config:
+    import: nacos:bci-task.yml
+  cloud:
+    nacos:
+      discovery:
+        server-addr: nacos:8848
+      config:
+        server-addr: nacos:8848
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://10.101.171.210:3306/bci?useSSL=false&serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8
@@ -12,6 +20,11 @@ spring:
       maximum-pool-size: 15
       minimum-idle: 5
       idle-timeout: 30000
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
 
 
 bci:
@@ -25,3 +38,6 @@ bci:
       2: 2
     maxTime:
       1: 30
+
+server:
+  port: 8083

@@ -40,7 +40,7 @@ public class AsyncTask {
     @Autowired
     private BCIConfig.TaskConfig taskConfig;
 
-    @Async
+    @Async("alg_task_executor")
     public void submitTask(DockerClient dockerClient, TaskDO task){
         ContainerLogDO containerLogDO = new ContainerLogDO();
         containerLogDO.setTaskId(task.getId());

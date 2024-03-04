@@ -15,7 +15,7 @@ import java.util.Date;
  * @Author: hcc
  * @Date: 2023/12/12
  */
-@FeignClient(name = "bci-task", url = "http://127.0.0.1:8083")
+@FeignClient(name = "bci-task")
 public interface TaskFeign {
 
     @PostMapping("/task/deleteTaskByUserId")

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @Author: hcc
  * @Date: 2024/1/9
  */
-@FeignClient(name = "bci-competition", url = "http://127.0.0.1:8082")
+@FeignClient(name = "bci-competition")
 public interface CompetitionFeign {
     @GetMapping("/paradigm/getInfoByParadigmId")
     ParadigmDTO getInfoByParadigmId( @RequestParam("paradigmId")int paradigmId);

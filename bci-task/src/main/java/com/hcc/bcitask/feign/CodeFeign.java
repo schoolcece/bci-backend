@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @Author: hcc
  * @Date: 2024/1/9
  */
-@FeignClient(name = "bci-code", url = "http://127.0.0.1:8081")
+@FeignClient(name = "bci-code")
 public interface CodeFeign {
     @GetMapping("/code/getCodeUrlById")
     String getCodeUrlById(int codeId);

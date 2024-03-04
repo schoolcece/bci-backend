@@ -16,5 +16,6 @@
         <module>bci-task</module>
         <module>bci-component</module>
         <module>bci-competition</module>
+        <module>bci-gateway</module>
     </modules>
 </project>

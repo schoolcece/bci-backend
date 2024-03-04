@@ -32,7 +32,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.18</version>
+            <version>1.18.30</version>
         </dependency>
 <!--        web 依赖引入-->
         <dependency>
@@ -105,16 +105,28 @@
             <version>4.1.0</version>
         </dependency>
 
+<!--        引入nacos依赖-->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+            <version>2023.0.0.0-RC1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+            <version>2023.0.0.0-RC1</version>
+        </dependency>
+
     </dependencies>
 
 
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.springframework.boot</groupId>-->
+<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
+<!--            </plugin>-->
 <!--            代码生成器插件-->
 <!--            <plugin>-->
 <!--                <groupId>org.mybatis.generator</groupId>-->

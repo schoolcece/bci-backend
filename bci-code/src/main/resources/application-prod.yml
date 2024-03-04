@@ -1,8 +1,8 @@
 spring:
   application:
-    name: bci-competition
+    name: bci-code
   config:
-    import: nacos:bci-competition.yml
+    import: nacos:bci-code.yml
   cloud:
     nacos:
       discovery:
@@ -11,7 +11,7 @@ spring:
         server-addr: nacos:8848
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://10.101.171.210:3306/bci?useSSL=false&serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8
+    url: jdbc:mysql://mysql:3306/bci?useSSL=false&useUnicode=true&characterEncoding=utf8
     username: root
     password: 123456
     type: com.zaxxer.hikari.HikariDataSource
@@ -21,13 +21,16 @@ spring:
       idle-timeout: 30000
   data:
     redis:
-      host: localhost
+      host: redis
       port: 6379
 
 bci:
+  code:
+    url: "/mnt/code"
+
   token:
     timeout: 100
     timeUnit: SECONDS
 
 server:
-  port: 8082
+  port: 8081
