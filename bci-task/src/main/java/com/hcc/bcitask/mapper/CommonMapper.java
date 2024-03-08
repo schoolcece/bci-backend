@@ -3,10 +3,13 @@ package com.hcc.bcitask.mapper;
 import com.hcc.common.model.entity.ComputeNodeDO;
 import com.hcc.common.model.entity.ContainerLogDO;
 import com.hcc.common.model.entity.TaskDO;
+import com.hcc.common.model.vo.RankVO;
+import com.hcc.common.model.vo.RecordVo;
 import com.hcc.common.model.vo.TaskVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
 
@@ -41,4 +44,14 @@ public interface CommonMapper {
     List<TaskVO> selectTaskByUserIdAndParadigm(@Param("userId")int userId, @Param("paradigm")int paradigm, @Param("index")int index, @Param("pageSize")int pageSize);
 
     long selectCount(@Param("userId")int userId, @Param("paradigm")int paradigm);
+
+    int getTotal(@Param("paradigmId")int paradigmId, @Param("dataset")int dataset, @Param("dateLine") Timestamp dateLine);
+
+    List<RankVO> rankByGroup(@Param("paradigmId")int paradigmId, @Param("dataset")int dataset, @Param("index") int index, @Param("pageSize")int rankSize, @Param("dateLine")Timestamp dateLine);
+
+    int recordCount(@Param("teamId")int teamId, @Param("paradigmId")int paradigm, @Param("dataset")int dataset, @Param("dateLine")Timestamp dateLine);
+
+    List<RecordVo> recordByTeam(@Param("teamId")int teamId, @Param("paradigmId")int paradigm, @Param("dataset")int dataset, @Param("index")int index, @Param("pageSize")int pageSize, @Param("dateLine")Timestamp dateLine);
+
+    String selectLogByTaskId(@Param("taskId")int taskId);
 }

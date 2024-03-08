@@ -42,4 +42,9 @@
         from bci_team t join bci_application a on t.id = a.team_id
         where t.event_id = #{event} and a.status = 0 and a.paradigm_id = #{paradigm} and t.status = 0
     </select>
+    <select id="selectTeamNameByTeamId" resultType="java.lang.String">
+        select team_name
+        from bci_team
+        where id = #{teamId}
+    </select>
 </mapper>

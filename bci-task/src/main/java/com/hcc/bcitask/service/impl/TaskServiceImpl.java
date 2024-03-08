@@ -2,15 +2,14 @@ package com.hcc.bcitask.service.impl;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;
-import com.github.dockerjava.api.command.WaitContainerResultCallback;
 import com.github.dockerjava.api.model.*;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
-import com.github.dockerjava.core.command.LogContainerResultCallback;
 import com.github.dockerjava.netty.NettyDockerCmdExecFactory;
 import com.hcc.bcitask.async.AsyncTask;
 import com.hcc.bcitask.feign.CodeFeign;
 import com.hcc.bcitask.feign.CompetitionFeign;
+import com.hcc.bcitask.feign.AuthFeign;
 import com.hcc.bcitask.mapper.CommonMapper;
 import com.hcc.bcitask.service.TaskService;
 import com.hcc.common.component.RedisComponent;
@@ -18,28 +17,26 @@ import com.hcc.common.config.BCIConfig;
 import com.hcc.common.constant.CustomConstants;
 import com.hcc.common.enums.ErrorCodeEnum;
 import com.hcc.common.exception.RTException;
+import com.hcc.common.model.R;
 import com.hcc.common.model.bo.UserInfoBO;
 import com.hcc.common.model.dto.ParadigmDTO;
 import com.hcc.common.model.dto.TaskDTO;
 import com.hcc.common.model.entity.ComputeNodeDO;
-import com.hcc.common.model.entity.ContainerLogDO;
 import com.hcc.common.model.entity.TaskDO;
-import com.hcc.common.model.vo.TaskVO;
+import com.hcc.common.model.vo.RankVO;
+import com.hcc.common.model.vo.RecordVo;
 import com.hcc.common.utils.UserUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
-import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
-
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * Description: service层具体实现 任务相关操作
@@ -69,6 +66,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Autowired
     private AsyncTask asyncTask;
+
+    @Autowired
+    private AuthFeign authFeign;
 
     @Override
     public void createTask(int paradigmId, int codeId, String taskName, int taskType) {
@@ -193,6 +193,70 @@ public class TaskServiceImpl implements TaskService {
                 .tasks(commonMapper.selectTaskByUserIdAndParadigm(user.getUserId(), paradigm, (curPage-1)*CustomConstants.PageSize.TASK_SIZE, CustomConstants.PageSize.TASK_SIZE))
                 .total(commonMapper.selectCount(user.getUserId(), paradigm))
                 .build();
+    }
+
+    @Override
+    public R rank(int paradigmId, int dataset, int curPage) {
+        // 1. 获取当前时间
+        Calendar cal = Calendar.getInstance();
+
+        // 2. 根据数据集获取成绩截至时间
+        cal.add(Calendar.DATE, dataset==0?1:0);
+
+        // 3. 重置时分秒毫秒
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+
+        // 4. 截至时间转换
+        Date yesterdayMidnight = cal.getTime();
+        Timestamp dateLine = new Timestamp(yesterdayMidnight.getTime());
+
+        // 5. 获取成绩总数
+        int total = commonMapper.getTotal(paradigmId, dataset, dateLine);
+
+        // 6. 获取当页成绩
+        List<RankVO> rank = commonMapper.rankByGroup(paradigmId, dataset, (curPage-1)*CustomConstants.PageSize.RANK_SIZE, CustomConstants.PageSize.RANK_SIZE, dateLine);
+
+        // 7. 队名转换
+        rank.forEach(
+                rankVo -> {
+                    rankVo.setTeamName(authFeign.getTeamName(rankVo.getTeamId()));
+                }
+        );
+        return R.ok().put("record", rank).put("total", total);
+    }
+
+    @Override
+    public R record(int teamId, int paradigm, int dataset, int curPage) {
+        // 1. 获取当前时间
+        Calendar cal = Calendar.getInstance();
+
+        // 2. 根据数据集获取成绩截至时间
+        cal.add(Calendar.DATE, dataset==0?1:0);
+
+        // 3. 重置时分秒毫秒
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+
+        // 4. 截至时间转换
+        Date yesterdayMidnight = cal.getTime();
+        Timestamp dateLine = new Timestamp(yesterdayMidnight.getTime());
+
+        // 5. 获取成绩记录总数
+        int total = commonMapper.recordCount(teamId, paradigm, dataset, dateLine);
+
+        // 5. 获取成绩记录当页数据
+        List<RecordVo> recordVo = commonMapper.recordByTeam(teamId, paradigm, dataset, (curPage-1)*CustomConstants.PageSize.RANK_SIZE, CustomConstants.PageSize.RANK_SIZE, dateLine);
+        return R.ok().put("total", total).put("record", recordVo);
+    }
+
+    @Override
+    public String getLog(int taskId) {
+        return commonMapper.selectLogByTaskId(taskId);
     }
 
     private void checkPermissions(UserInfoBO user, int paradigmId) {

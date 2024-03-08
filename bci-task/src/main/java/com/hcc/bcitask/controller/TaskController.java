@@ -51,7 +51,7 @@ public class TaskController {
      * @return
      */
     @GetMapping("/getTask")
-    public R getTask(@RequestParam("paradigm") int paradigm, @RequestParam(value = "current", defaultValue = "1") int curPage) {
+    public R getTask(@RequestParam("paradigm") int paradigm, @RequestParam(value = "curPage", defaultValue = "1") int curPage) {
         return R.ok().put("data", taskService.getTask(paradigm, curPage));
     }
 
@@ -77,7 +77,7 @@ public class TaskController {
     @GetMapping("/rank")
     public R getScoreRank(@RequestParam("paradigmId") int paradigmId, @RequestParam("dataset") int dataset,
                           @RequestParam(value = "curPage", defaultValue = "1") int curPage) {
-        return R.ok();
+        return taskService.rank(paradigmId, dataset, curPage);
     }
 
     /**
@@ -91,7 +91,17 @@ public class TaskController {
     @GetMapping("/record")
     public R getScoreRecord(@RequestParam("teamId") int teamId, @RequestParam("paradigm") int paradigm,
                             @RequestParam("dataset") int dataset, @RequestParam(value = "curPage", defaultValue = "1") int curPage) {
-        return R.ok();
+        return taskService.record(teamId, paradigm, dataset, curPage);
+    }
+
+    /**
+     * 获取任务对应日志
+     * @param taskId
+     * @return
+     */
+    @GetMapping("/getLog")
+    public R getLog(@RequestParam("taskId") int taskId) {
+        return R.ok().put("content", taskService.getLog(taskId));
     }
 
 

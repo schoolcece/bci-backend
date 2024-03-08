@@ -69,4 +69,6 @@ public interface TeamService extends IService<TeamDO> {
     List<UserInfoVO> getTeamMembersById(int teamId);
 
     void auditTeam(int teamId, int paradigm, int status);
+
+    String getTeamName(int teamId);
 }

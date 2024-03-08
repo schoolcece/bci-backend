@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @Author: hcc
  * @Date: 2024/1/9
  */
-@FeignClient(name = "bci-code")
-public interface CodeFeign {
-    @GetMapping("/code/getCodeUrlById")
-    String getCodeUrlById(@RequestParam("codeId")int codeId);
+@FeignClient(name = "bci-auth")
+public interface AuthFeign {
+    @GetMapping("/team/getTeamNameById")
+    String getTeamName(@RequestParam("teamId")int teamId);
 }

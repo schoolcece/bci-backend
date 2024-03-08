@@ -74,4 +74,35 @@
         from bci_task
         where show_status = 1 and user_id = #{userId} and paradigm_id = #{paradigm}
     </select>
+    <select id="getTotal" resultType="java.lang.Integer">
+        select count(*) total from (select team_id
+                                    from bci_task
+                                    where `paradigm_id` = #{paradigmId} and status = 2 and dataset = #{dataset} and show_status = 1 and score is not null and create_time &lt; #{dateLine}
+                                    group by team_id) ts
+    </select>
+    <select id="rankByGroup" resultType="com.hcc.common.model.vo.RankVO">
+        select team_id, max(score) as score
+        from bci_task
+        where `paradigm_id` = #{paradigmId} and status = 2 and dataset = #{dataset} and show_status = 1 and score is not null and create_time &lt; #{dateLine}
+        group by team_id
+        order by score desc, team_id asc
+        limit #{index}, #{pageSize}
+    </select>
+    <select id="recordCount" resultType="java.lang.Integer">
+        select count(*)
+        from bci_task
+        where team_id = #{teamId} and `paradigm_id` = #{paradigmId} and status = 2 and dataset = #{dataset} and show_status = 1 and score is not null and create_time &lt; #{dateLine}
+    </select>
+    <select id="recordByTeam" resultType="com.hcc.common.model.vo.RecordVo">
+        select create_time, score
+        from bci_task
+        where team_id = #{teamId} and `paradigm_id` = #{paradigmId} and status = 2 and dataset = #{dataset} and show_status = 1 and score is not null and create_time &lt; #{dateLine}
+        order by create_time desc
+        limit #{index}, #{pageSize}
+    </select>
+    <select id="selectLogByTaskId" resultType="java.lang.String">
+        select content
+        from bci_container_log
+        where task_id = #{taskId}
+    </select>
 </mapper>

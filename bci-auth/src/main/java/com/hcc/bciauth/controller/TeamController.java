@@ -169,4 +169,14 @@ public class TeamController {
         teamService.auditTeam(teamId, paradigm, status);
         return R.ok();
     }
+
+    /**
+     * 内部调用接口 根据队伍ID获取队名
+     * @param teamId
+     * @return
+     */
+    @GetMapping("/getTeamNameById")
+    String getTeamName(@RequestParam("teamId")int teamId){
+        return teamService.getTeamName(teamId);
+    }
 }

@@ -278,6 +278,11 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
         teamMapper.updateAppStatusByTeamId(teamId, paradigm, status);
     }
 
+    @Override
+    public String getTeamName(int teamId) {
+        return teamMapper.selectTeamNameByTeamId(teamId);
+    }
+
     private void checkTeamMemberOver(int teamId) {
         Long count = userTeamMapper.selectCount(new QueryWrapper<UserTeamDO>().eq("team_id", teamId));
         if (count > 0) {
