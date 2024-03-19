@@ -150,7 +150,7 @@ CREATE TABLE `bci_task`(
                            `task_name` VARCHAR(255) NOT NULL comment '任务名称',
                            `task_type` TINYINT NOT NULL comment '任务类型 0代表cpu任务， 1代表gpu任务',
                            `dataset` TINYINT NOT NULL comment '数据集 0代表A榜， 1代表B榜',
-                           `container_id` INT default NULL comment '容器id',
+                           `container_id` VARCHAR(255) default NULL comment '容器id',
                            `status` TINYINT NOT NULL default 0 comment '状态： 0:待运行 1:运行中 2:运行成功 3:运行失败',
                            `create_time` TIMESTAMP NOT NULL default CURRENT_TIMESTAMP comment '创建时间',
                            `score` float default NULL comment '得分',

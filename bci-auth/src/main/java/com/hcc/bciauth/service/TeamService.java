@@ -1,6 +1,7 @@
 package com.hcc.bciauth.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.hcc.common.model.Page;
 import com.hcc.common.model.entity.TeamDO;
 import com.hcc.common.model.param.CreateTeamParam;
 import com.hcc.common.model.vo.TeamInfoVO;
@@ -60,7 +61,7 @@ public interface TeamService extends IService<TeamDO> {
      */
     void registerForCompetition(int event, int paradigm);
 
-    List<TeamInfoVO> getAllTeamInfos(int event, int curPage, String teamName);
+    Page<TeamInfoVO> getAllTeamInfos(int event, int curPage, String teamName);
 
     List<UserInfoVO> getTeamMembers(int eventId);
 

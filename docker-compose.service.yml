@@ -11,42 +11,30 @@ services:
       - my-network
 
   bci-auth:
-    container_name: bci-auth
     build:
       context: ./bci-auth
       dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
     networks:
       - my-network
 
   bci-code:
-    container_name: bci-code
     build:
       context: ./bci-code
       dockerfile: Dockerfile
-    ports:
-      - "8081:8081"
     networks:
       - my-network
 
   bci-competition:
-    container_name: bci-competition
     build:
       context: ./bci-competition
       dockerfile: Dockerfile
-    ports:
-      - "8082:8082"
     networks:
       - my-network
 
   bci-task:
-    container_name: bci-task
     build:
       context: ./bci-task
       dockerfile: Dockerfile
-    ports:
-      - "8083:8083"
     networks:
       - my-network
 

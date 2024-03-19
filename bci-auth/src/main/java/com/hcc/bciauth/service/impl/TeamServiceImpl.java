@@ -6,6 +6,7 @@ import com.hcc.bciauth.feign.CompetitionFeign;
 import com.hcc.common.constant.CustomConstants;
 import com.hcc.bciauth.mapper.TeamMapper;
 import com.hcc.bciauth.mapper.UserTeamMapper;
+import com.hcc.common.model.Page;
 import com.hcc.common.model.entity.ApplicationDO;
 import com.hcc.common.model.entity.TeamDO;
 import com.hcc.common.model.entity.UserTeamDO;
@@ -244,8 +245,11 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
     }
 
     @Override
-    public List<TeamInfoVO> getAllTeamInfos(int event, int curPage, String teamName) {
-        return teamMapper.selectByEventLikeTeamName(event, teamName, (curPage-1)*CustomConstants.PageSize.TEAM_SIZE, CustomConstants.PageSize.TEAM_SIZE);
+    public Page<TeamInfoVO> getAllTeamInfos(int event, int curPage, String teamName) {
+        return Page.<TeamInfoVO>builder()
+                .record(teamMapper.selectByEventLikeTeamName(event, teamName, (curPage-1)*CustomConstants.PageSize.TEAM_SIZE, CustomConstants.PageSize.TEAM_SIZE))
+                .total(teamMapper.selectCount(null))
+                .build();
     }
 
     @Override

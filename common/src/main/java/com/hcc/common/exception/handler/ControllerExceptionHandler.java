@@ -44,7 +44,7 @@ public class ControllerExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public R handlerException(Exception exception) {
-        logger.error("系统未知异常原因： {}", exception.toString());
+        logger.error("系统未知异常" + exception.getMessage(), exception);
         return R.error(ErrorCodeEnum.UN_KNOW_EXCEPTION.getCode(), ErrorCodeEnum.UN_KNOW_EXCEPTION.getMsg());
     }
 }
