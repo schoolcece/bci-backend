@@ -35,6 +35,8 @@ services:
     build:
       context: ./bci-task
       dockerfile: Dockerfile
+    ports:
+      - "9001:8083"
     networks:
       - my-network
 
