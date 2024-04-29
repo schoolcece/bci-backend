@@ -133,10 +133,10 @@ public class TaskServiceImpl implements TaskService {
             //6.2.1 配置gpu
 //        setGpu(hostConfig);
             //6.2.2 配置数据文件挂载
-//        setFileBinds(hostConfig, taskDO.getDataset() == 0?paradigmInfo.getAData():paradigmInfo.getBData());
+            setFileBinds(hostConfig, taskDO.getDataset() == 0?paradigmInfo.getAData():paradigmInfo.getBData());
             //6.3. 创建容器
             container = dockerClient.createContainerCmd(paradigmInfo.getImage())
-                    .withEnv("TASK_ID="+taskDO.getId(), "URL="+taskConfig.getUpdateScoreURl(), "PARADIGM_NAME="+paradigmInfo.getParadigmName())
+                    .withEnv("TASK_ID="+taskDO.getId(), taskConfig.getUpdateScoreURl(), "PARADIGM_NAME="+paradigmInfo.getParadigmName())
                     .withHostConfig(hostConfig)
                     .withCmd("/bin/sh" , "-c", taskConfig.getCmd()).exec();
         }catch (Exception e){
@@ -295,9 +295,9 @@ public class TaskServiceImpl implements TaskService {
     }
 
     private void setFileBinds(HostConfig hostConfig, String dataUrl) {
-        hostConfig.withBinds(new Bind(dataUrl,new Volume(taskConfig.getDataPath())),
-                new Bind("/usr/local/cuda", new Volume("/usr/local/cuda")),
-                new Bind("/usr/local/cuda-11.7", new Volume("/usr/local/cuda-11.7"))
+        hostConfig.withBinds(new Bind(dataUrl,new Volume(taskConfig.getDataPath()))
+//                , new Bind("/usr/local/cuda", new Volume("/usr/local/cuda"))
+//                , new Bind("/usr/local/cuda-11.7", new Volume("/usr/local/cuda-11.7"))
         );
     }
 
