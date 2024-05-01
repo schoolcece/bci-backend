@@ -59,7 +59,7 @@
         from bci_compute_resource
     </select>
     <select id="selectTaskById" resultType="com.hcc.common.model.entity.TaskDO">
-        select id, user_id, team_id, code_id, paradigm_id, task_name, dataset, container_id, status, create_time, score, compute_node_ip, show_status
+        select id, user_id, team_id, code_id, paradigm_id, task_type, task_name, dataset, container_id, status, create_time, score, compute_node_ip, show_status
         from bci_task
         where show_status = 1 and id = #{taskId}
     </select>
