@@ -1,6 +1,7 @@
 package com.hcc.common.model.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,8 +12,9 @@ import lombok.NoArgsConstructor;
  * @Date: 2024/1/9
  */
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class ContainerLogDO {
     /**
      * 主键id

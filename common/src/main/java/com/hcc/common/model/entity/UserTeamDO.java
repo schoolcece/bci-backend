@@ -3,8 +3,10 @@ package com.hcc.common.model.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Description: 用户队伍关系
@@ -15,6 +17,8 @@ import lombok.Data;
 @Data
 @Builder
 @TableName("bci_user_team")
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserTeamDO {
 
     /**

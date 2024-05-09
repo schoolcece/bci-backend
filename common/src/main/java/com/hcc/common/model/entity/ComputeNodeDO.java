@@ -1,7 +1,9 @@
 package com.hcc.common.model.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Description: 计算节点实体类
@@ -11,6 +13,8 @@ import lombok.Data;
  */
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ComputeNodeDO {
     /**
      * 主键id
