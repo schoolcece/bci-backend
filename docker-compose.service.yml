@@ -21,6 +21,8 @@ services:
     build:
       context: ./bci-code
       dockerfile: Dockerfile
+    volumes:
+      - /nfs/code:/nfs/code
     networks:
       - my-network
 
@@ -35,6 +37,9 @@ services:
     build:
       context: ./bci-task
       dockerfile: Dockerfile
+    volumes:
+      - /nfs/code:/nfs/code
+      - /nfs/data:/nfs/data
     ports:
       - "9001:8083"
     networks:
