@@ -25,9 +25,6 @@ spring:
       port: 6379
 
 bci:
-  code:
-    url: "/mnt/code"
-
   token:
     timeout: 100
     timeUnit: SECONDS
