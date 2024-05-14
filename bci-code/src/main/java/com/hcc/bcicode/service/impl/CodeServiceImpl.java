@@ -103,7 +103,7 @@ public class CodeServiceImpl extends ServiceImpl<CodeMapper, CodeDO> implements 
 
     @Override
     public String getCodeUrlById(int codeId) {
-        return codeMapper.getCodeUrlById(codeId);
+        return codeMapper.getCodeUrlById(codeId) + "/" + codeMapper.getFileNameById(codeId);
     }
 
     private void checkPermissions(UserInfoBO user, int paradigmId) {
