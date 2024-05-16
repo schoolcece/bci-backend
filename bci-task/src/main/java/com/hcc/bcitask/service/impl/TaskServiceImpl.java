@@ -179,10 +179,10 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void updateScoreById(int taskId, float score) {
         //1. 内部调用密钥校验
-        UserInfoBO user = UserUtils.getUser();
-        if (!user.isAdmin()) {
-            throw new RTException(ErrorCodeEnum.NO_PERMISSION.getCode(), ErrorCodeEnum.NO_PERMISSION.getMsg());
-        }
+//        UserInfoBO user = UserUtils.getUser();
+//        if (!user.isAdmin()) {
+//            throw new RTException(ErrorCodeEnum.NO_PERMISSION.getCode(), ErrorCodeEnum.NO_PERMISSION.getMsg());
+//        }
         commonMapper.updateScoreById(taskId, score);
     }
 

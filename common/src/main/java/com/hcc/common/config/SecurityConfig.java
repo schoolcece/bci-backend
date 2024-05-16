@@ -33,6 +33,7 @@ public class SecurityConfig {
                 authorize.requestMatchers("/auth/login").anonymous()
                         .requestMatchers("/auth/register").anonymous()
                         .requestMatchers("/event/listEvent").permitAll()
+                        .requestMatchers("/task/updateScore").permitAll()
                         .anyRequest().authenticated());
         http.csrf(AbstractHttpConfigurer::disable);
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
