@@ -39,7 +39,7 @@ public interface BCIConfig {
         private String cmd;
         private String updateScoreURl;
         private String codePath;
-        private String dataPath;
+        private Map<Integer, String> dataPath;
     }
 
 
