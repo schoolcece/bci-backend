@@ -25,6 +25,7 @@ import com.hcc.common.model.entity.ComputeNodeDO;
 import com.hcc.common.model.entity.TaskDO;
 import com.hcc.common.model.vo.RankVO;
 import com.hcc.common.model.vo.RecordVo;
+import com.hcc.common.utils.KeyConvertUtils;
 import com.hcc.common.utils.UserUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,8 +106,8 @@ public class TaskServiceImpl implements TaskService {
             throw new RTException(ErrorCodeEnum.NO_PERMISSION.getCode(), ErrorCodeEnum.NO_PERMISSION.getMsg());
         }
         //3. 提交次数检查
-        String countKey = "teamId"+ taskDO.getTeamId() + "paradigm" + taskDO.getParadigmId();
-        String taskingKey = countKey + "on";
+        String countKey = KeyConvertUtils.countKeyConvert(taskDO.getTeamId(), taskDO.getParadigmId());
+        String taskingKey = KeyConvertUtils.taskingKeyConvert(taskDO.getTeamId(), taskDO.getParadigmId());
         checkCommitTimes(countKey, taskDO.getParadigmId());
         //4. 检查该用户所在队伍是否有正在运行的任务
         if (!redisComponent.setIfAbsent(taskingKey, 1L, taskConfig.getMaxTime().get(taskDO.getParadigmId())+60, TimeUnit.SECONDS)) {

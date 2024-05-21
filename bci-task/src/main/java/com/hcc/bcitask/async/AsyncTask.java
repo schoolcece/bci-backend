@@ -10,6 +10,7 @@ import com.hcc.common.config.BCIConfig;
 import com.hcc.common.constant.CustomConstants;
 import com.hcc.common.model.entity.ContainerLogDO;
 import com.hcc.common.model.entity.TaskDO;
+import com.hcc.common.utils.KeyConvertUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,8 +46,8 @@ public class AsyncTask {
         ContainerLogDO containerLogDO = new ContainerLogDO();
         containerLogDO.setTaskId(task.getId());
         StringBuilder logContent = new StringBuilder();
-        String countKey = "teamId"+ task.getTeamId() + "paradigm" + task.getParadigmId();
-        String taskingKey = countKey + "on";
+        String countKey = KeyConvertUtils.countKeyConvert(task.getTeamId(), task.getParadigmId());
+        String taskingKey = KeyConvertUtils.taskingKeyConvert(task.getTeamId(), task.getParadigmId());
         //1. 运行算法并等待运行结果
         try{
             dockerClient.startContainerCmd(task.getContainerId()).exec();
