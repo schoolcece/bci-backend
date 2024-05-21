@@ -45,7 +45,7 @@ public class AsyncTask {
         ContainerLogDO containerLogDO = new ContainerLogDO();
         containerLogDO.setTaskId(task.getId());
         StringBuilder logContent = new StringBuilder();
-        String countKey = "teamId"+ task.getTeamId() + "type" + task.getParadigmId();
+        String countKey = "teamId"+ task.getTeamId() + "paradigm" + task.getParadigmId();
         String taskingKey = countKey + "on";
         //1. 运行算法并等待运行结果
         try{
