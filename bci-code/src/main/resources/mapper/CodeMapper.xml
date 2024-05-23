@@ -7,6 +7,7 @@
         select id, file_name, create_time
         from bci_code
         where paradigm_id = #{paradigmId} and user_id = #{userId} and show_status = 1
+        order by create_time desc
         limit #{index}, #{pageNum}
     </select>
     <select id="getCodeUrlById" resultType="java.lang.String">

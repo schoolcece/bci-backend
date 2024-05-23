@@ -67,6 +67,7 @@
         select id, task_name, status, create_time
         from bci_task
         where show_status = 1 and user_id = #{userId} and paradigm_id = #{paradigm}
+        order by create_time desc
         limit #{index}, #{pageSize}
     </select>
     <select id="selectCount" resultType="java.lang.Long">
