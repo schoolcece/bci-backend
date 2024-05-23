@@ -1,8 +1,13 @@
 package com.hcc.bcitask.controller;
 
+import com.hcc.bcitask.mapper.CommonMapper;
 import com.hcc.bcitask.service.TaskService;
 import com.hcc.common.annotation.Loggable;
+import com.hcc.common.component.RedisComponent;
 import com.hcc.common.model.R;
+import com.hcc.common.model.bo.UserInfoBO;
+import com.hcc.common.utils.KeyConvertUtils;
+import com.hcc.common.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +23,9 @@ public class TaskController {
 
     @Autowired
     private TaskService taskService;
+
+    @Autowired
+    private RedisComponent redisComponent;
 
     /**
      * 创建任务接口
@@ -52,7 +60,8 @@ public class TaskController {
      */
     @GetMapping("/getTask")
     public R getTask(@RequestParam("paradigm") int paradigm, @RequestParam(value = "curPage", defaultValue = "1") int curPage) {
-        return R.ok().put("data", taskService.getTask(paradigm, curPage));
+        UserInfoBO user = UserUtils.getUser();
+        return R.ok().put("data", taskService.getTask(paradigm, curPage)).put("running", redisComponent.hasKey(KeyConvertUtils.taskingKeyConvert(user.getTeamInfoMap().get(paradigm<=5?1:2).getTeamId(), paradigm)));
     }
 
     /**

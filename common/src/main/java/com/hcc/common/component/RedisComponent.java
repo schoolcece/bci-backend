@@ -80,4 +80,8 @@ public class RedisComponent {
     public void increment(String countKey) {
         longRedisTemplate.opsForValue().increment(countKey);
     }
+
+    public boolean hasKey(String key) {
+        return objectRedisTemplate.hasKey(key);
+    }
 }
