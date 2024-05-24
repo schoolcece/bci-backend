@@ -289,7 +289,7 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
 
     private void checkTeamMemberOver(int teamId) {
         Long count = userTeamMapper.selectCount(new QueryWrapper<UserTeamDO>().eq("team_id", teamId));
-        if (count > 0) {
+        if (count > 2) {
             throw new RTException(ErrorCodeEnum.TEAM_MEMBER_OVER.getCode(), ErrorCodeEnum.TEAM_MEMBER_OVER.getMsg());
         }
     }
