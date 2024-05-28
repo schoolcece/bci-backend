@@ -148,7 +148,7 @@ CREATE TABLE `bci_task`(
                            `code_id` INT NOT NULL comment '代码id',
                            `paradigm_id` INT NOT NULL comment '范式id',
                            `task_name` VARCHAR(255) NOT NULL comment '任务名称',
-                           `task_type` TINYINT NOT NULL comment '任务类型 0代表cpu任务， 1代表gpu任务',
+                           `task_type` TINYINT NOT NULL DEFAULT 0 comment '任务类型 0代表cpu任务， 1代表gpu任务',
                            `dataset` TINYINT NOT NULL comment '数据集 0代表A榜， 1代表B榜',
                            `container_id` VARCHAR(255) default NULL comment '容器id',
                            `status` TINYINT NOT NULL default 0 comment '状态： 0:待运行 1:运行中 2:运行成功 3:运行失败',
