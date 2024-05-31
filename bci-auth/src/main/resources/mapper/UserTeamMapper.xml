@@ -5,12 +5,12 @@
     <update id="updateStatusByUserIdAndTeamId">
         update bci_user_team
         set status = #{approved}
-        where userId = #{userId} and teamId = #{teamId}
+        where user_id = #{userId} and team_id = #{teamId}
     </update>
     <update id="updateRoleByUserIdAndTeamIdWithStatus">
         update bci_user_team
         set role = #{role}
-        where userId = #{userId} and teamId = #{teamId} and status = #{approved}
+        where user_id = #{userId} and team_id = #{teamId} and status = #{approved}
     </update>
     <select id="selectTeamMembersByTeamId" resultType="com.hcc.common.model.vo.UserInfoVO">
         select u.id userId, u.username userName, u.mobile mobile, u.university university, ut.role, ut.status
