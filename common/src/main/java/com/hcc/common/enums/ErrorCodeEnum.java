@@ -39,7 +39,9 @@ public enum ErrorCodeEnum {
     // 2.9 今日任务数达上限
     COMMIT_OVER_TIMES(100409,"今日提交次数超过限制"),
     // 2.10 代码异常
-    CODE_NOT_EXIST(100410, "代码解析失败，请检查代码格式");
+    CODE_NOT_EXIST(100410, "代码解析失败，请检查代码格式"),
+    // 2.11 用户已存在
+    USER_ALREADY_EXITS(100411, "用户已存在");
 
 
 

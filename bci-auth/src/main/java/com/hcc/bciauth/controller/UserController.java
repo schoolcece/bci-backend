@@ -31,18 +31,14 @@ public class UserController {
     @Loggable("用户注册")
     @PostMapping("/register")
     public R register(@RequestBody @Valid RegisterParam registerParam) {
+        userService.register(registerParam);
         return R.ok();
     }
 
-    /**
-     * 用户登录接口
-     * @param loginParam
-     * @return
-     */
     @Loggable("用户登录")
-    @PostMapping("/login")
-    public R login(@RequestBody @Valid LoginParam loginParam) {
-        return R.ok().put("data", userService.login(loginParam));
+    @GetMapping ("/login")
+    public R login(@RequestParam("uid") String uid) {
+        return R.ok().put("data", userService.login(uid));
     }
 
     /**
