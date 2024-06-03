@@ -24,8 +24,8 @@
 
 <mapper namespace="com.hcc.bcitask.mapper.CommonMapper">
     <insert id="insertTask">
-        insert into bci_task (user_id, team_id, code_id, paradigm_id, task_name, dataset, compute_node_ip)
-        values (#{taskDO.userId}, #{taskDO.teamId}, #{taskDO.codeId}, #{taskDO.paradigmId}, #{taskDO.taskName}, #{taskDO.dataset}, #{taskDO.computeNodeIp})
+        insert into bci_task (user_id, team_id, code_id, paradigm_id, task_type, task_name, dataset, compute_node_ip)
+        values (#{taskDO.userId}, #{taskDO.teamId}, #{taskDO.codeId}, #{taskDO.paradigmId}, #{taskDO.taskType}, #{taskDO.taskName}, #{taskDO.dataset}, #{taskDO.computeNodeIp})
     </insert>
     <insert id="saveLog">
         insert into bci_container_log (task_id, content)
