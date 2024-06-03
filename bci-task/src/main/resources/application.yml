@@ -32,12 +32,6 @@ bci:
     timeout: 100
     timeUnit: SECONDS
 
-  task:
-    maxExec:
-      1: 2
-      2: 2
-    maxTime:
-      1: 30
 
 server:
   port: 8083
