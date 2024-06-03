@@ -100,7 +100,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
     public String login(String uid) {
         UserDO userDO = userMapper.selectOne(new QueryWrapper<UserDO>().eq("uid", uid));
         if (Objects.isNull(userDO)) {
-            throw new RTException(ErrorCodeEnum.USER_NOT_EXIST.getCode(), ErrorCodeEnum.USER_ALREADY_EXITS.getMsg());
+            throw new RTException(ErrorCodeEnum.USER_NOT_EXIST.getCode(), ErrorCodeEnum.USER_NOT_EXIST.getMsg());
         }
 
         String oldToken = redisComponent.getString(userDO.getId().toString());
