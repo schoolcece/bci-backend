@@ -173,7 +173,8 @@ ALTER TABLE
 CREATE TABLE `bci_container_log`(
                                     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
                                     `task_id` INT NOT NULL comment '任务id',
-                                    `content` TEXT NOT NULL comment '日志内容'
+                                    `content` TEXT NOT NULL comment '日志内容',
+                                    UNIQUE INDEX idx_task_id (task_id)
 );
 ALTER TABLE
     `bci_container_log` comment '容器日志表';

@@ -28,8 +28,9 @@
         values (#{taskDO.userId}, #{taskDO.teamId}, #{taskDO.codeId}, #{taskDO.paradigmId}, #{taskDO.taskType}, #{taskDO.taskName}, #{taskDO.dataset}, #{taskDO.computeNodeIp})
     </insert>
     <insert id="saveLog">
-        insert into bci_container_log (task_id, content)
-        values (#{containerLogDO.taskId}, #{containerLogDO.content})
+        INSERT INTO bci_container_log (task_id, content)
+        VALUES (#{containerLogDO.taskId}, #{containerLogDO.content})
+            ON DUPLICATE KEY UPDATE content = VALUES(content);
     </insert>
     <update id="updateScoreById">
         update bci_task set score = #{score}
