@@ -132,7 +132,7 @@ public class TaskServiceImpl implements TaskService {
             //6.2. 创建容器并完成各项配置
             HostConfig hostConfig = new HostConfig();
             //6.2.1 配置gpu
-//        setGpu(hostConfig);
+            setGpu(hostConfig);
             //6.2.2 配置数据文件挂载
             setFileBinds(hostConfig, taskDO.getDataset() == 0?paradigmInfo.getAData():paradigmInfo.getBData(), taskDO.getParadigmId());
             //6.3. 创建容器
