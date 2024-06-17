@@ -3,6 +3,7 @@ package com.hcc.bciauth.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hcc.bciauth.feign.CompetitionFeign;
+import com.hcc.common.config.BCIConfig;
 import com.hcc.common.constant.CustomConstants;
 import com.hcc.bciauth.mapper.TeamMapper;
 import com.hcc.bciauth.mapper.UserTeamMapper;
@@ -45,6 +46,8 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
     private UserTeamMapper userTeamMapper;
     @Autowired
     private CompetitionFeign competitionFeign;
+    @Autowired
+    private BCIConfig.AuthConfig authConfig;
 
     @Override
     @Transactional
@@ -289,7 +292,7 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
 
     private void checkTeamMemberOver(int teamId) {
         Long count = userTeamMapper.selectCount(new QueryWrapper<UserTeamDO>().eq("team_id", teamId));
-        if (count > 2) {
+        if (count > authConfig.getMaxMember() - 1) {
             throw new RTException(ErrorCodeEnum.TEAM_MEMBER_OVER.getCode(), ErrorCodeEnum.TEAM_MEMBER_OVER.getMsg());
         }
     }

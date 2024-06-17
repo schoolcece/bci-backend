@@ -42,5 +42,12 @@ public interface BCIConfig {
         private Map<Integer, String> dataPath;
     }
 
+    @Configuration
+    @ConfigurationProperties("bci.auth")
+    @Data
+    class AuthConfig {
+        private int maxMember;
+    }
+
 
 }
