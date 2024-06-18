@@ -241,6 +241,8 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
                 .updateUser(user.getUserId()).build();
         teamMapper.insertApplicationIfNotExist(applicationDO);
 
+        teamMapper.updateAppStatusByTeamId(teamInfo.getTeamId(), paradigm, 0);
+
         // 4. 更新登录态缓存
         user.getPermissions().putIfAbsent(paradigm, CustomConstants.ApplicationStatus.PENDING);
         redisComponent.setObject(redisComponent.getString(String.valueOf(user.getUserId())), user, CustomConstants.TokenConfig.TIMEOUT, CustomConstants.TokenConfig.TIME_UNIT);
