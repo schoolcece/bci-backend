@@ -76,14 +76,19 @@ public class AsyncTask {
                     .withStdErr(true).exec(new LogContainerResultCallback() {
                         @Override
                         public void onNext(Frame item) {
-                            if (item.toString().contains("运行成功")){
+                            if (item.toString().contains("[SUCCESS]")){
                                 long expire = redisComponent.getExpireForLong(countKey, SECONDS);
                                 if (expire>=0){
                                     redisComponent.increment(countKey);
                                 }
+                                logContent.append(item.toString()
+                                        .replaceFirst("STDERR:","\n"));
                             }
-                            logContent.append(item.toString()
-                                    .replaceFirst("STDERR:","\n"));
+                            if (item.toString().contains("[ERROR]"))
+                            {
+                                logContent.append(item.toString()
+                                        .replaceFirst("STDERR:","\n"));
+                            }
                         }
                     }).awaitCompletion();
         } catch (Exception e) {
