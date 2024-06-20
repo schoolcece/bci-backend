@@ -84,7 +84,7 @@ public class AsyncTask {
                                 logContent.append(item.toString()
                                         .replaceFirst("STDERR:","\n"));
                             }
-                            if (item.toString().contains("[ERROR]"))
+                            if (item.toString().contains("[ERROR]") || item.toString().contains("Error"))
                             {
                                 logContent.append(item.toString()
                                         .replaceFirst("STDERR:","\n"));
