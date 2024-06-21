@@ -65,7 +65,7 @@ public class CodeServiceImpl extends ServiceImpl<CodeMapper, CodeDO> implements 
             if (codeExists.isEmpty()) {
                 // 4. 保存代码文件
                 savePath +=  "/" + paradigmId + "/" + user.getUserId() + "/" + md5DigestAsHex;
-                File filePath = new File(savePath, file.getOriginalFilename());
+                File filePath = new File(savePath, "code.tar.gz");
                 if (!filePath.exists()) {
                     if(!filePath.mkdirs()) {
                         throw new RTException(ErrorCodeEnum.SYSTEM_ERROR.getCode(), ErrorCodeEnum.SYSTEM_ERROR.getMsg());
@@ -81,7 +81,7 @@ public class CodeServiceImpl extends ServiceImpl<CodeMapper, CodeDO> implements 
                     .paradigmId(paradigmId)
                     .url(savePath)
                     .userId(user.getUserId())
-                    .fileName(file.getOriginalFilename())
+                    .fileName("code.tar.gz")
                     .md5(md5DigestAsHex)
                     .build();
             codeMapper.insert(codeDO);
