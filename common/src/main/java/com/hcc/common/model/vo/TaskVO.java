@@ -36,7 +36,7 @@ public class TaskVO {
     /**
      * 创建时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss" , timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private Date createTime;
 
 }

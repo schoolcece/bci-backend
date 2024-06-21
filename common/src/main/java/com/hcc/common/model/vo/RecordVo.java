@@ -14,7 +14,7 @@ import java.util.Date;
 @Data
 public class RecordVo {
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss" , timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     private float score;
