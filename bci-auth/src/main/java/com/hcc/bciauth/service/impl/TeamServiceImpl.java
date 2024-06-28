@@ -131,10 +131,13 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
             throw new RTException(ErrorCodeEnum.NO_PERMISSION.getCode(), ErrorCodeEnum.NO_PERMISSION.getMsg());
         }
 
-        // 2. 更改用户申请入队的状态为已审核
+        // 2. 检查队伍是否已到人数上限
+        checkTeamMemberOver(teamInfo.getTeamId());
+
+        // 3. 更改用户申请入队的状态为已审核
         userTeamMapper.updateStatusByUserIdAndTeamId(userId, teamInfo.getTeamId(), CustomConstants.UserTeamRelationStatus.APPROVED);
 
-        // 3. todo： 如果被审核人已登录，更新被审核人的登录态缓存
+        // 4. todo： 如果被审核人已登录，更新被审核人的登录态缓存
     }
 
     @Transactional
@@ -293,7 +296,7 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
     }
 
     private void checkTeamMemberOver(int teamId) {
-        Long count = userTeamMapper.selectCount(new QueryWrapper<UserTeamDO>().eq("team_id", teamId));
+        Long count = userTeamMapper.selectCount(new QueryWrapper<UserTeamDO>().eq("team_id", teamId).eq("status", 1));
         if (count > authConfig.getMaxMember() - 1) {
             throw new RTException(ErrorCodeEnum.TEAM_MEMBER_OVER.getCode(), ErrorCodeEnum.TEAM_MEMBER_OVER.getMsg());
         }
