@@ -47,4 +47,15 @@
         from bci_team
         where id = #{teamId}
     </select>
+    <select id="selectTeamIdsByParadigmAndStatus" resultType="java.lang.Integer">
+        select team_id
+        from bci_application
+        where paradigm_id = #{paradigm} and status = 1
+    </select>
+    <select id="selectTeamByID" resultType="com.hcc.common.model.entity.TeamDO">
+        select id, event_id, leader_id, team_name, instructor, university, status
+        from bci_team
+        where id = #{teamId}
+    </select>
+
 </mapper>

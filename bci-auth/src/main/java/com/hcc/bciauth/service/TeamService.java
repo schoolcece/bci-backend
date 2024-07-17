@@ -2,6 +2,7 @@ package com.hcc.bciauth.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.hcc.common.model.Page;
+import com.hcc.common.model.dto.TeamDTO;
 import com.hcc.common.model.entity.TeamDO;
 import com.hcc.common.model.param.CreateTeamParam;
 import com.hcc.common.model.vo.TeamInfoVO;
@@ -72,4 +73,7 @@ public interface TeamService extends IService<TeamDO> {
     void auditTeam(int teamId, int paradigm, int status);
 
     String getTeamName(int teamId);
+
+
+    TeamDTO listTeamByParadigm(int event, int paradigm);
 }

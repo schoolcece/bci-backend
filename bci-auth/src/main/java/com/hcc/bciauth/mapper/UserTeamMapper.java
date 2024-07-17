@@ -21,4 +21,6 @@ public interface UserTeamMapper extends BaseMapper<UserTeamDO> {
     void updateRoleByUserIdAndTeamIdWithStatus(@Param("userId")int userId, @Param("teamId")int teamId, @Param("role")int role, @Param("approved")int approved);
 
     List<UserInfoVO> selectTeamMembersByTeamId(@Param("teamId")int teamId);
+
+    List<String> selectMembersNameByTeamId(@Param("teamId")int teamId);
 }

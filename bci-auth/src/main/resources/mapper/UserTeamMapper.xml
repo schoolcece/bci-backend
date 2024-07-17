@@ -17,4 +17,9 @@
         from bci_user u join bci_user_team ut on u.id = ut.user_id
         where ut.team_id = #{teamId}
     </select>
+    <select id="selectMembersNameByTeamId" resultType="java.lang.String">
+        select u.username
+        from bci_user u join bci_user_team ut on u.id = ut.user_id
+        where ut.team_id = #{teamId} and ut.status = 1
+    </select>
 </mapper>

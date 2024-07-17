@@ -3,13 +3,16 @@ package com.hcc.bciauth.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hcc.bciauth.feign.CompetitionFeign;
+import com.hcc.bciauth.mapper.UserMapper;
 import com.hcc.common.config.BCIConfig;
 import com.hcc.common.constant.CustomConstants;
 import com.hcc.bciauth.mapper.TeamMapper;
 import com.hcc.bciauth.mapper.UserTeamMapper;
 import com.hcc.common.model.Page;
+import com.hcc.common.model.dto.TeamDTO;
 import com.hcc.common.model.entity.ApplicationDO;
 import com.hcc.common.model.entity.TeamDO;
+import com.hcc.common.model.entity.UserDO;
 import com.hcc.common.model.entity.UserTeamDO;
 import com.hcc.common.model.param.CreateTeamParam;
 import com.hcc.bciauth.service.TeamService;
@@ -18,6 +21,7 @@ import com.hcc.common.enums.ErrorCodeEnum;
 import com.hcc.common.exception.RTException;
 import com.hcc.common.model.bo.UserInfoBO;
 import com.hcc.common.model.vo.TeamInfoVO;
+import com.hcc.common.model.vo.TeamVO;
 import com.hcc.common.model.vo.UserInfoVO;
 import com.hcc.common.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +32,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Description: 服务层 队伍相关操作实现
@@ -48,6 +53,8 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
     private CompetitionFeign competitionFeign;
     @Autowired
     private BCIConfig.AuthConfig authConfig;
+    @Autowired
+    private UserMapper userMapper;
 
     @Override
     @Transactional
@@ -288,6 +295,35 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
             throw new RTException(ErrorCodeEnum.NO_PERMISSION.getCode(), ErrorCodeEnum.NO_PERMISSION.getMsg());
         }
         teamMapper.updateAppStatusByTeamId(teamId, paradigm, status);
+    }
+
+    @Override
+    public TeamDTO listTeamByParadigm(int event, int paradigm) {
+        List<Integer> teamIds = teamMapper.selectTeamIdsByParadigmAndStatus(paradigm);
+        List<TeamVO> teamVOS = teamIds.stream()
+                .map(teamId -> teamMapper.selectTeamByID(teamId))
+                .filter(teamDO -> teamDO != null && teamDO.getStatus() == 0)
+                .map(teamDO -> {
+                    UserDO leader = userMapper.selectUserById(teamDO.getLeaderId());
+
+                    List<String> members = userTeamMapper.selectMembersNameByTeamId(teamDO.getId());
+
+                    return TeamVO.builder()
+                            .teamName(teamDO.getTeamName())
+                            .university(teamDO.getUniversity())
+                            .instructor(teamDO.getInstructor())
+                            .memberNumbers(members.size())
+                            .members(members)
+                            .leaderName(leader.getUsername())
+                            .mobile(leader.getMobile())
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        return TeamDTO.builder()
+                .teams(teamVOS)
+                .total(teamVOS.size())
+                .build();
     }
 
     @Override

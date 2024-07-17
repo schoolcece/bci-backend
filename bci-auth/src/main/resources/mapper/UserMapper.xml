@@ -8,4 +8,9 @@
         from bci_user_paradigm
         where user_id = #{userId}
     </select>
+    <select id="selectUserById" resultType="com.hcc.common.model.entity.UserDO">
+        select id, username, mobile, email, university, profession, uid, birthday, status, role
+        from bci_user
+        where id = #{userId}
+    </select>
 </mapper>

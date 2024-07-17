@@ -171,6 +171,17 @@ public class TeamController {
     }
 
     /**
+     * 报名系统队伍成绩展示接口 get请求
+     * @param event
+     * @param paradigm
+     * @return
+     */
+    @GetMapping("/listTeamByParadigm")
+    public R listTeamByParadigm(@RequestParam int event, @RequestParam int paradigm){
+        return R.ok().put("data", teamService.listTeamByParadigm(event, paradigm));
+    }
+
+    /**
      * 内部调用接口 根据队伍ID获取队名
      * @param teamId
      * @return

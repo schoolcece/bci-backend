@@ -22,4 +22,6 @@ public interface UserMapper extends BaseMapper<UserDO> {
      * @return
      */
     List<Integer> selectByUserId(@Param("userId") int userId);
+
+    UserDO selectUserById(@Param("userId") int userId);
 }
