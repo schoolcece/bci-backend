@@ -37,7 +37,7 @@
         where id = #{taskId}
     </update>
     <update id="updateTaskById">
-        update bci_task set container_id = #{taskDO.containerId}, status = #{taskDO.status}
+        update bci_task set container_id = #{taskDO.containerId}, status = #{taskDO.status}, compute_node_ip = #{taskDO.computeNodeIp}
         where id = #{taskDO.id}
     </update>
     <update id="updateStatusById">
