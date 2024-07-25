@@ -49,5 +49,11 @@ public interface BCIConfig {
         private int maxMember;
     }
 
+    @Configuration
+    @ConfigurationProperties("bci.final")
+    @Data
+    class FinalConfig {
+        private int groupNumber;
+    }
 
 }

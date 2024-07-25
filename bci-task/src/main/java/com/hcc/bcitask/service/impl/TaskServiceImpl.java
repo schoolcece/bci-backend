@@ -23,6 +23,8 @@ import com.hcc.common.model.dto.ParadigmDTO;
 import com.hcc.common.model.dto.TaskDTO;
 import com.hcc.common.model.entity.ComputeNodeDO;
 import com.hcc.common.model.entity.TaskDO;
+import com.hcc.common.model.entity.TaskFinalDO;
+import com.hcc.common.model.entity.TaskGroupFinalDO;
 import com.hcc.common.model.vo.RankVO;
 import com.hcc.common.model.vo.RecordVo;
 import com.hcc.common.utils.KeyConvertUtils;
@@ -64,6 +66,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Autowired
     private BCIConfig.TaskConfig taskConfig;
+
+    @Autowired
+    private BCIConfig.FinalConfig finalConfig;
 
     @Autowired
     private AsyncTask asyncTask;
@@ -260,6 +265,100 @@ public class TaskServiceImpl implements TaskService {
         return commonMapper.selectLogByTaskId(taskId);
     }
 
+    @Override
+    public void createTaskForFinals(int paradigmId, int codeId, String taskName, int taskType) {
+        UserInfoBO user = UserUtils.getUser();
+        //1. 鉴权
+        checkPermissions(user, paradigmId);
+        //2. 查询范式信息
+        ParadigmDTO paradigmInfo = competitionFeign.getInfoByParadigmId(paradigmId);
+        //3. 任务信息入库
+        TaskFinalDO taskFinalDO = TaskFinalDO.builder()
+                .userId(user.getUserId())
+                .teamId(user.getTeamInfoMap().get(paradigmInfo.getEventId()).getTeamId())
+                .codeId(codeId)
+                .paradigmId(paradigmId)
+                .taskName(taskName)
+                .taskType(taskType)
+                .build();
+        commonMapper.insertTaskFinal(taskFinalDO);
+    }
+
+    @Override
+    public void confirmTask(int taskId) {
+        UserInfoBO user = UserUtils.getUser();
+        //1. 查询任务信息和范式信息
+        TaskFinalDO taskFinalDO = commonMapper.selectTaskFinalById(taskId);
+        ParadigmDTO paradigmInfo = competitionFeign.getInfoByParadigmId(taskFinalDO.getParadigmId());
+        //2. 执行任务是否属于当前用户
+        if (taskFinalDO.getUserId() != user.getUserId()) {
+            throw new RTException(ErrorCodeEnum.NO_PERMISSION.getCode(), ErrorCodeEnum.NO_PERMISSION.getMsg());
+        }
+        //3. 获取代码信息
+        String codeUrl = codeFeign.getCodeUrlById(taskFinalDO.getCodeId());
+        //4. 容器组信息入库
+        for (int groupid = 1; groupid <= finalConfig.getGroupNumber(); groupid ++) {
+            TaskGroupFinalDO taskGroupFinalDO = TaskGroupFinalDO.builder()
+                    .taskId(taskFinalDO.getId())
+                    .groupId(groupid)
+                    .containerName("team_" + user.getTeamInfoMap().get(paradigmInfo.getEventId()).getTeamId() + ".group_" + groupid)
+                    .build();
+
+            //5. 获取计算节点并创建三个容器
+            DockerClient dockerClient;
+            CreateContainerResponse container;
+            try {
+                String computeNodeIp = getComputeNodeForFinals(taskFinalDO.getTeamId());
+                taskFinalDO.setComputeNodeIp(computeNodeIp);
+                DefaultDockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
+                        .withDockerHost("tcp://"+taskFinalDO.getComputeNodeIp()+":2375")
+                        .build();
+                dockerClient = DockerClientBuilder
+                        .getInstance(config)
+                        .withDockerCmdExecFactory(new NettyDockerCmdExecFactory())
+                        .build();
+                HostConfig hostConfig = new HostConfig();
+                setGpu(hostConfig);
+                container = dockerClient.createContainerCmd(paradigmInfo.getImage())
+                        .withEnv("COMPONENT_ID=" + taskGroupFinalDO.getContainerName(), "TEAM_NAME=", "ALGORITHM_NUMBER=" + groupid)
+                        .withHostConfig(hostConfig)
+                        .withCmd("/bin/sh" , "-c", taskConfig.getCmd()).exec();
+            } catch (Exception e) {
+                logger.error(e.getLocalizedMessage());
+                throw new RTException(ErrorCodeEnum.COMPUTE_RESOURCE_FAILD.getCode(), ErrorCodeEnum.COMPUTE_RESOURCE_FAILD.getMsg());
+            }
+            GZIPInputStream gis = null;
+            try {
+                gis = new GZIPInputStream(new FileInputStream(codeUrl));
+            }catch (Exception e){
+                logger.error(e.getLocalizedMessage());
+                throw new RTException(ErrorCodeEnum.CODE_NOT_EXIST.getCode(), ErrorCodeEnum.CODE_NOT_EXIST.getMsg());
+            }
+            dockerClient.copyArchiveToContainerCmd(container.getId()).withTarInputStream(gis).withRemotePath(taskConfig.getCodePath()).exec();
+            taskGroupFinalDO.setContainerId(container.getId());
+            taskGroupFinalDO.setStatus(CustomConstants.BCITaskStatus.PENDING);
+            commonMapper.insertTaskGroupFinal(taskGroupFinalDO);
+        }
+    }
+
+    @Override
+    public void execTaskForFinals(int taskId) {
+        TaskFinalDO taskFinalDO = commonMapper.selectTaskFinalById(taskId);
+        DefaultDockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
+                .withDockerHost("tcp://"+taskFinalDO.getComputeNodeIp()+":2375")
+                .build();
+        DockerClient dockerClient = DockerClientBuilder
+                .getInstance(config)
+                .withDockerCmdExecFactory(new NettyDockerCmdExecFactory())
+                .build();
+        for (int groupid = 1; groupid <= finalConfig.getGroupNumber(); groupid ++) {
+            TaskGroupFinalDO taskGroupFinalDO = commonMapper.selectTaskGroupFinalByTaskIdAndGroupId(taskId, groupid);
+            String containerId = taskGroupFinalDO.getContainerId();
+            dockerClient.startContainerCmd(containerId).exec();
+            taskGroupFinalDO.setStatus(CustomConstants.BCITaskStatus.PROCESSING);
+        }
+    }
+
     private void checkPermissions(UserInfoBO user, int paradigmId) {
         if (user.isAdmin()) {
             return;
@@ -281,6 +380,10 @@ public class TaskServiceImpl implements TaskService {
            throw new RTException(ErrorCodeEnum.NO_COMPUTE_NODE.getCode(), ErrorCodeEnum.NO_COMPUTE_NODE.getMsg());
         }
         return nodes.get(0).getIp();
+    }
+
+    private String getComputeNodeForFinals(int teamId) {
+        return commonMapper.selectComputeNodeForFinalsByTeamId(teamId);
     }
 
     private void setGpu(HostConfig hostConfig){

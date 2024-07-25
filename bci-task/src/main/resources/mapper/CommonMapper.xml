@@ -32,6 +32,14 @@
         VALUES (#{containerLogDO.taskId}, #{containerLogDO.content})
             ON DUPLICATE KEY UPDATE content = VALUES(content);
     </insert>
+    <insert id="insertTaskFinal">
+        insert into bci_task_final (user_id, team_id, code_id, paradigm_id, task_name, task_type)
+        values (#{taskFinalDO.userId}, #{taskFinalDO.teamId}, #{taskFinalDO.codeId}, #{taskFinalDO.paradigmId}, #{taskFinalDO.taskName}, #{taskFinalDO.taskType})
+    </insert>
+    <insert id="insertTaskGroupFinal">
+        insert into bci_task_group_final (task_id, group_id, container_name)
+        values (#{taskGroupFinalDO.taskId}, #{taskGroupFinalDO.groupId}, #{taskGroupFinalDO.containerName})
+    </insert>
     <update id="updateScoreById">
         update bci_task set score = #{score}
         where id = #{taskId}
@@ -106,5 +114,25 @@
         select content
         from bci_container_log
         where task_id = #{taskId}
+    </select>
+    <select id="selectTaskFinalById" resultType="com.hcc.common.model.entity.TaskFinalDO">
+        select id, user_id, team_id, code_id, paradigm_id, task_type, task_name
+        from bci_task_final
+        where id = #{taskId}
+    </select>
+    <select id="selectComputeNodeForFinalsByTeamId" resultType="java.lang.String">
+        select ip
+        from bci_compute_resource_final
+        where team_id = #{teamId}
+    </select>
+    <select id="selectContainerIdByTaskIdAndGroupId" resultType="java.lang.String">
+        select container_id
+        from bci_task_group_final
+        where task_id = #{taskId} and group_id = #{groupid}
+    </select>
+    <select id="selectTaskGroupFinalByTaskIdAndGroupId" resultType="com.hcc.common.model.entity.TaskGroupFinalDO">
+        select id, task_id, group_id, container_id, container_name, status
+        from bci_task_group_final
+        where task_id = #{taskId} and group_id = #{groupid}
     </select>
 </mapper>

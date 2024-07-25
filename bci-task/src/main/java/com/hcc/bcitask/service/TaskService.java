@@ -29,4 +29,10 @@ public interface TaskService {
     R record(int teamId, int paradigm, int dataset, int curPage);
 
     String getLog(int taskId);
+
+    void createTaskForFinals(int paradigmId, int codeId, String taskName, int taskType);
+
+    void confirmTask(int taskId);
+
+    void execTaskForFinals(int taskId);
 }

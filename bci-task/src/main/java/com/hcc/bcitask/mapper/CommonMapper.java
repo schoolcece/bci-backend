@@ -1,8 +1,6 @@
 package com.hcc.bcitask.mapper;
 
-import com.hcc.common.model.entity.ComputeNodeDO;
-import com.hcc.common.model.entity.ContainerLogDO;
-import com.hcc.common.model.entity.TaskDO;
+import com.hcc.common.model.entity.*;
 import com.hcc.common.model.vo.RankVO;
 import com.hcc.common.model.vo.RecordVo;
 import com.hcc.common.model.vo.TaskVO;
@@ -54,4 +52,16 @@ public interface CommonMapper {
     List<RecordVo> recordByTeam(@Param("teamId")int teamId, @Param("paradigmId")int paradigm, @Param("dataset")int dataset, @Param("index")int index, @Param("pageSize")int pageSize, @Param("dateLine")Timestamp dateLine);
 
     String selectLogByTaskId(@Param("taskId")int taskId);
+
+    void insertTaskFinal(@Param("taskFinalDO")TaskFinalDO taskFinalDO);
+
+    TaskFinalDO selectTaskFinalById(@Param("taskId") int taskId);
+
+    String selectComputeNodeForFinalsByTeamId(@Param("teamId") int teamId);
+
+    void insertTaskGroupFinal(@Param("taskGroupFinalDO") TaskGroupFinalDO taskGroupFinalDO);
+
+    String selectContainerIdByTaskIdAndGroupId(@Param("taskId") int taskId, @Param("groupid") int groupid);
+
+    TaskGroupFinalDO selectTaskGroupFinalByTaskIdAndGroupId(@Param("taskId") int taskId, @Param("groupid") int groupid);
 }
