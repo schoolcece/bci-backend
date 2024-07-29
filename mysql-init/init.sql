@@ -11,6 +11,9 @@ drop table if exists bci_user_team;
 drop table if exists bci_application;
 
 drop table if exists bci_code;
+drop table if exists bci_task_final;
+drop table if exists bci_task_group_final;
+drop table if exists bci_compute_resource_final;
 
 CREATE TABLE `bci_event`(
                             `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -187,7 +190,7 @@ CREATE TABLE `bci_task_final`(
                            `paradigm_id` INT NOT NULL comment '范式id',
                            `task_name` VARCHAR(255) NOT NULL comment '任务名称',
                            `task_type` TINYINT NOT NULL DEFAULT 0 comment '任务类型 0代表cpu任务， 1代表gpu任务',
-                           `compute_node_ip` VARCHAR(25) comment '计算节点',
+                           `compute_node_ip` VARCHAR(25) comment '计算节点'
 );
 ALTER TABLE
     `bci_task_final` comment '决赛任务表';
@@ -198,7 +201,7 @@ CREATE TABLE `bci_task_group_final`(
                                        `group_id` TINYINT NOT NULL comment '被试id',
                                        `container_id` VARCHAR(255) default NULL comment '容器id',
                                        `container_name` VARCHAR(255) default NULL comment '容器名',
-                                       `status` TINYINT NOT NULL default 0 comment '状态： 0:待运行 1:正常运行 2:运行出错',
+                                       `status` TINYINT NOT NULL default 0 comment '状态： 0:待运行 1:正常运行 2:运行出错'
 );
 ALTER TABLE
     `bci_task_group_final` comment '决赛容器组表';
@@ -206,7 +209,7 @@ ALTER TABLE
 CREATE TABLE `bci_compute_resource_final`(
                                 `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
                                 `team_id` INT NOT NULL COMMENT '队伍id',
-                                `ip` VARCHAR(15) NOT NULL comment '节点ip',
+                                `ip` VARCHAR(15) NOT NULL comment '节点ip'
 );
 ALTER TABLE
     `bci_compute_resource_final` comment '决赛计算资源表';
