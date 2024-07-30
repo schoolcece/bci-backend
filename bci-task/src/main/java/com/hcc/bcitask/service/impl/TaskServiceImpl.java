@@ -307,6 +307,7 @@ public class TaskServiceImpl implements TaskService {
             try {
                 String computeNodeIp = getComputeNodeForFinals(taskFinalDO.getTeamId());
                 taskFinalDO.setComputeNodeIp(computeNodeIp);
+                commonMapper.updateTaskFinalById(taskFinalDO);
                 DefaultDockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
                         .withDockerHost("tcp://"+taskFinalDO.getComputeNodeIp()+":2375")
                         .build();

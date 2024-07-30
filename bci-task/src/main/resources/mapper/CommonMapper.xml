@@ -37,8 +37,8 @@
         values (#{taskFinalDO.userId}, #{taskFinalDO.teamId}, #{taskFinalDO.codeId}, #{taskFinalDO.paradigmId}, #{taskFinalDO.taskName}, #{taskFinalDO.taskType})
     </insert>
     <insert id="insertTaskGroupFinal">
-        insert into bci_task_group_final (task_id, group_id, container_name)
-        values (#{taskGroupFinalDO.taskId}, #{taskGroupFinalDO.groupId}, #{taskGroupFinalDO.containerName})
+        insert into bci_task_group_final (task_id, group_id, container_name, container_id, status)
+        values (#{taskGroupFinalDO.taskId}, #{taskGroupFinalDO.groupId}, #{taskGroupFinalDO.containerName}, #{taskGroupFinalDO.containerId}, #{taskGroupFinalDO.status})
     </insert>
     <update id="updateScoreById">
         update bci_task set score = #{score}
@@ -57,6 +57,10 @@
     </update>
     <update id="usedNodeByIp">
         UPDATE  bci_compute_resource SET running_tasks = running_tasks-1 where ip = #{computeNodeIp}
+    </update>
+    <update id="updateTaskFinalById">
+        update bci_task_final set compute_node_ip = #{taskFinalDO.computeNodeIp}
+        where id = #{taskFinalDO.id}
     </update>
     <delete id="deleteTaskById">
         update bci_task set show_status = 0
@@ -116,7 +120,7 @@
         where task_id = #{taskId}
     </select>
     <select id="selectTaskFinalById" resultType="com.hcc.common.model.entity.TaskFinalDO">
-        select id, user_id, team_id, code_id, paradigm_id, task_type, task_name
+        select id, user_id, team_id, code_id, paradigm_id, task_type, task_name, compute_node_ip
         from bci_task_final
         where id = #{taskId}
     </select>
