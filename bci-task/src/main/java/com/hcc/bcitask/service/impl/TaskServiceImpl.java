@@ -68,9 +68,6 @@ public class TaskServiceImpl implements TaskService {
     private BCIConfig.TaskConfig taskConfig;
 
     @Autowired
-    private BCIConfig.FinalConfig finalConfig;
-
-    @Autowired
     private AsyncTask asyncTask;
 
     @Autowired
@@ -297,7 +294,7 @@ public class TaskServiceImpl implements TaskService {
         //3. 获取代码信息
         String codeUrl = codeFeign.getCodeUrlById(taskFinalDO.getCodeId());
         //4. 容器组信息入库
-        for (int groupid = 1; groupid <= finalConfig.getGroupNumber(); groupid ++) {
+        for (int groupid = 1; groupid <= taskConfig.getFinalGroup(); groupid ++) {
             TaskGroupFinalDO taskGroupFinalDO = TaskGroupFinalDO.builder()
                     .taskId(taskFinalDO.getId())
                     .groupId(groupid)
@@ -351,7 +348,7 @@ public class TaskServiceImpl implements TaskService {
                 .getInstance(config)
                 .withDockerCmdExecFactory(new NettyDockerCmdExecFactory())
                 .build();
-        for (int groupid = 1; groupid <= finalConfig.getGroupNumber(); groupid ++) {
+        for (int groupid = 1; groupid <= taskConfig.getFinalGroup(); groupid ++) {
             TaskGroupFinalDO taskGroupFinalDO = commonMapper.selectTaskGroupFinalByTaskIdAndGroupId(taskId, groupid);
             String containerId = taskGroupFinalDO.getContainerId();
             dockerClient.startContainerCmd(containerId).exec();

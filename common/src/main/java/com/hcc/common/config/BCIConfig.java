@@ -40,6 +40,7 @@ public interface BCIConfig {
         private String updateScoreURl;
         private String codePath;
         private Map<Integer, String> dataPath;
+        private int finalGroup;
     }
 
     @Configuration
@@ -47,13 +48,6 @@ public interface BCIConfig {
     @Data
     class AuthConfig {
         private int maxMember;
-    }
-
-    @Configuration
-    @ConfigurationProperties("bci.final")
-    @Data
-    class FinalConfig {
-        private int groupNumber;
     }
 
 }
