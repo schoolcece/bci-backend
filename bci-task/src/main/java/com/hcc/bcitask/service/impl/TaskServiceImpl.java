@@ -318,7 +318,7 @@ public class TaskServiceImpl implements TaskService {
                 HostConfig hostConfig = new HostConfig();
                 setGpu(hostConfig);
                 container = dockerClient.createContainerCmd(paradigmInfo.getImage())
-                        .withEnv("COMPONENT_ID=" + taskGroupFinalDO.getContainerName(), "TEAM_NAME=", "ALGORITHM_NUMBER=" + groupid)
+                        .withEnv("COMPONENT_ID=" + taskGroupFinalDO.getContainerName(), "TEAM_NAME=" + authFeign.getTeamName(user.getTeamInfoMap().get(paradigmInfo.getEventId()).getTeamId()), "ALGORITHM_NUMBER=" + groupid)
                         .withHostConfig(hostConfig)
                         .withCmd("/bin/sh" , "-c", taskConfig.getCmd()).exec();
             } catch (Exception e) {
