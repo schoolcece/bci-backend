@@ -120,7 +120,7 @@
         where task_id = #{taskId}
     </select>
     <select id="selectTaskFinalById" resultType="com.hcc.common.model.entity.TaskFinalDO">
-        select id, user_id, team_id, code_id, paradigm_id, task_type, task_name, compute_node_ip
+        select id, user_id, team_id, code_id, paradigm_id, task_type, task_name, compute_node_ip, status
         from bci_task_final
         where id = #{taskId}
     </select>
