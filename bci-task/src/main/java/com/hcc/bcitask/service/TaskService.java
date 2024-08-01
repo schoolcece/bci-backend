@@ -35,4 +35,6 @@ public interface TaskService {
     void confirmTask(int taskId);
 
     void execTaskForFinals(int taskId);
+
+    void execAllTaskForFinals(int paradigmId);
 }

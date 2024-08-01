@@ -66,4 +66,8 @@ public interface CommonMapper {
     TaskGroupFinalDO selectTaskGroupFinalByTaskIdAndGroupId(@Param("taskId") int taskId, @Param("groupid") int groupid);
 
     void updateTaskFinalById(@Param("taskFinalDO") TaskFinalDO taskFinalDO);
+
+    List<TaskFinalDO> selectTaskFinalByParadigmIdAndStatus(@Param("paradigmId") int paradigmId);
+
+    void updateTaskGroupFinalById(@Param("taskGroupFinalDO") TaskGroupFinalDO taskGroupFinalDO);
 }

@@ -147,6 +147,17 @@ public class TaskController {
         return R.ok();
     }
 
+    /**
+     * 决赛所有任务启动接口
+     * @param
+     * @return
+     */
+    @PostMapping("/execAllTaskForFinals")
+    public R execAllTaskForFinals(@RequestParam("paradigmId") int paradigmId) {
+        taskService.execAllTaskForFinals(paradigmId);
+        return R.ok();
+    }
+
 
 //======================================以下为内部调用接口==========================================================================================
 

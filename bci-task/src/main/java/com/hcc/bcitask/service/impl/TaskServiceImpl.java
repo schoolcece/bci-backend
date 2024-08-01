@@ -364,6 +364,27 @@ public class TaskServiceImpl implements TaskService {
         }
     }
 
+    @Override
+    public void execAllTaskForFinals(int paradigmId) {
+        List<TaskFinalDO> taskFinalDOS = commonMapper.selectTaskFinalByParadigmIdAndStatus(paradigmId);
+        for (TaskFinalDO taskFinalDO : taskFinalDOS) {
+            DefaultDockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
+                    .withDockerHost("tcp://"+taskFinalDO.getComputeNodeIp()+":2375")
+                    .build();
+            DockerClient dockerClient = DockerClientBuilder
+                    .getInstance(config)
+                    .withDockerCmdExecFactory(new NettyDockerCmdExecFactory())
+                    .build();
+            for (int groupid = 1; groupid <= taskConfig.getFinalGroup(); groupid ++) {
+                TaskGroupFinalDO taskGroupFinalDO = commonMapper.selectTaskGroupFinalByTaskIdAndGroupId(taskFinalDO.getId(), groupid);
+                String containerId = taskGroupFinalDO.getContainerId();
+                dockerClient.startContainerCmd(containerId).exec();
+                taskGroupFinalDO.setStatus(CustomConstants.BCITaskStatus.PROCESSING);
+                commonMapper.updateTaskGroupFinalById(taskGroupFinalDO);
+            }
+        }
+    }
+
     private void checkPermissions(UserInfoBO user, int paradigmId) {
         if (user.isAdmin()) {
             return;
