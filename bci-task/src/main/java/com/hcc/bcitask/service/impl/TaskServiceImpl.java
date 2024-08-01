@@ -277,6 +277,7 @@ public class TaskServiceImpl implements TaskService {
                 .paradigmId(paradigmId)
                 .taskName(taskName)
                 .taskType(taskType)
+                .status(0)
                 .build();
         commonMapper.insertTaskFinal(taskFinalDO);
     }
@@ -293,6 +294,10 @@ public class TaskServiceImpl implements TaskService {
         }
         //3. 获取代码信息
         String codeUrl = codeFeign.getCodeUrlById(taskFinalDO.getCodeId());
+
+        String computeNodeIp = getComputeNodeForFinals(taskFinalDO.getTeamId());
+        taskFinalDO.setComputeNodeIp(computeNodeIp);
+
         //4. 容器组信息入库
         for (int groupid = 1; groupid <= taskConfig.getFinalGroup(); groupid ++) {
             TaskGroupFinalDO taskGroupFinalDO = TaskGroupFinalDO.builder()
@@ -305,9 +310,6 @@ public class TaskServiceImpl implements TaskService {
             DockerClient dockerClient;
             CreateContainerResponse container;
             try {
-                String computeNodeIp = getComputeNodeForFinals(taskFinalDO.getTeamId());
-                taskFinalDO.setComputeNodeIp(computeNodeIp);
-                commonMapper.updateTaskFinalById(taskFinalDO);
                 DefaultDockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
                         .withDockerHost("tcp://"+taskFinalDO.getComputeNodeIp()+":2375")
                         .build();
@@ -336,6 +338,8 @@ public class TaskServiceImpl implements TaskService {
             taskGroupFinalDO.setContainerId(container.getId());
             taskGroupFinalDO.setStatus(CustomConstants.BCITaskStatus.PENDING);
             commonMapper.insertTaskGroupFinal(taskGroupFinalDO);
+            taskFinalDO.setStatus(1);
+            commonMapper.updateTaskFinalById(taskFinalDO);
         }
     }
 

@@ -190,7 +190,8 @@ CREATE TABLE `bci_task_final`(
                            `paradigm_id` INT NOT NULL comment '范式id',
                            `task_name` VARCHAR(255) NOT NULL comment '任务名称',
                            `task_type` TINYINT NOT NULL DEFAULT 0 comment '任务类型 0代表cpu任务， 1代表gpu任务',
-                           `compute_node_ip` VARCHAR(25) comment '计算节点'
+                           `compute_node_ip` VARCHAR(25) comment '计算节点',
+                           `status` TINYINT NOT NULL DEFAULT 0 comment '确认状态 0代表未确认，1代表已确认'
 );
 ALTER TABLE
     `bci_task_final` comment '决赛任务表';

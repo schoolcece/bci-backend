@@ -33,8 +33,8 @@
             ON DUPLICATE KEY UPDATE content = VALUES(content);
     </insert>
     <insert id="insertTaskFinal">
-        insert into bci_task_final (user_id, team_id, code_id, paradigm_id, task_name, task_type)
-        values (#{taskFinalDO.userId}, #{taskFinalDO.teamId}, #{taskFinalDO.codeId}, #{taskFinalDO.paradigmId}, #{taskFinalDO.taskName}, #{taskFinalDO.taskType})
+        insert into bci_task_final (user_id, team_id, code_id, paradigm_id, task_name, task_type, status)
+        values (#{taskFinalDO.userId}, #{taskFinalDO.teamId}, #{taskFinalDO.codeId}, #{taskFinalDO.paradigmId}, #{taskFinalDO.taskName}, #{taskFinalDO.taskType}, #{taskFinalDO.status})
     </insert>
     <insert id="insertTaskGroupFinal">
         insert into bci_task_group_final (task_id, group_id, container_name, container_id, status)
@@ -59,7 +59,7 @@
         UPDATE  bci_compute_resource SET running_tasks = running_tasks-1 where ip = #{computeNodeIp}
     </update>
     <update id="updateTaskFinalById">
-        update bci_task_final set compute_node_ip = #{taskFinalDO.computeNodeIp}
+        update bci_task_final set compute_node_ip = #{taskFinalDO.computeNodeIp}, status = #{taskFinalDO.status}
         where id = #{taskFinalDO.id}
     </update>
     <delete id="deleteTaskById">

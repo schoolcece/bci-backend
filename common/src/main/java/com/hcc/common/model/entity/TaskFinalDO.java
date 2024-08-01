@@ -26,4 +26,6 @@ public class TaskFinalDO {
     private int taskType;
 
     private String computeNodeIp;
+
+    private int status;
 }
