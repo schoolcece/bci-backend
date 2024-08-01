@@ -361,6 +361,7 @@ public class TaskServiceImpl implements TaskService {
             String containerId = taskGroupFinalDO.getContainerId();
             dockerClient.startContainerCmd(containerId).exec();
             taskGroupFinalDO.setStatus(CustomConstants.BCITaskStatus.PROCESSING);
+            commonMapper.updateTaskGroupFinalById(taskGroupFinalDO);
         }
     }
 
