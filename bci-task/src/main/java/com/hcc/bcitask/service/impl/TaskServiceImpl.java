@@ -346,6 +346,9 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void execTaskForFinals(int taskId) {
         TaskFinalDO taskFinalDO = commonMapper.selectTaskFinalById(taskId);
+        if (taskFinalDO.getStatus() != 1) {
+            throw new RTException(ErrorCodeEnum.NO_PERMISSION.getCode(), ErrorCodeEnum.NO_PERMISSION.getMsg());
+        }
         DefaultDockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
                 .withDockerHost("tcp://"+taskFinalDO.getComputeNodeIp()+":2375")
                 .build();
