@@ -55,4 +55,14 @@ public class CodeController {
         return codeService.getCodeUrlById(codeId);
     }
 
+    /**
+     * 代码md5查询接口 内部调用接口
+     * @param codeId
+     * @return
+     */
+    @GetMapping("/getMd5ById")
+    String getMd5ById(int codeId) {
+        return codeService.getMd5ById(codeId);
+    }
+
 }

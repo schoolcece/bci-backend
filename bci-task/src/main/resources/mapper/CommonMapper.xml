@@ -148,4 +148,16 @@
         from bci_task_final
         where paradigm_id = #{paradigmId} and status = 1
     </select>
+    <select id="selectTaskFinalByUserIdAndParadigm" resultType="com.hcc.common.model.vo.TaskFinalVO">
+        select id, task_name, status
+        from bci_task_final
+        where user_id = #{userId} and paradigm_id = #{paradigm}
+        order by id desc
+        limit #{index}, #{pageSize}
+    </select>
+    <select id="selectCountForFinals" resultType="java.lang.Long">
+        select count(*)
+        from bci_task_final
+        where user_id = #{userId} and paradigm_id = #{paradigm}
+    </select>
 </mapper>

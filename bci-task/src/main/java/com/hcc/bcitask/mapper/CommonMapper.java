@@ -3,6 +3,7 @@ package com.hcc.bcitask.mapper;
 import com.hcc.common.model.entity.*;
 import com.hcc.common.model.vo.RankVO;
 import com.hcc.common.model.vo.RecordVo;
+import com.hcc.common.model.vo.TaskFinalVO;
 import com.hcc.common.model.vo.TaskVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -70,4 +71,8 @@ public interface CommonMapper {
     List<TaskFinalDO> selectTaskFinalByParadigmIdAndStatus(@Param("paradigmId") int paradigmId);
 
     void updateTaskGroupFinalById(@Param("taskGroupFinalDO") TaskGroupFinalDO taskGroupFinalDO);
+
+    List<TaskFinalVO> selectTaskFinalByUserIdAndParadigm(@Param("userId")int userId, @Param("paradigm")int paradigm, @Param("index")int index, @Param("pageSize")int pageSize);
+
+    long selectCountForFinals(@Param("userId") int userId, @Param("paradigm")int paradigm);
 }

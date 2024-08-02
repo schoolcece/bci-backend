@@ -106,6 +106,11 @@ public class CodeServiceImpl extends ServiceImpl<CodeMapper, CodeDO> implements 
         return codeMapper.getCodeUrlById(codeId) + "/" + codeMapper.getFileNameById(codeId);
     }
 
+    @Override
+    public String getMd5ById(int codeId) {
+        return codeMapper.getMd5ById(codeId);
+    }
+
     private void checkPermissions(UserInfoBO user, int paradigmId) {
         if (user.isAdmin()) {
             return;

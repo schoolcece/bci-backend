@@ -21,4 +21,6 @@ public interface CodeMapper extends BaseMapper<CodeDO> {
     String getCodeUrlById(@Param("codeId")int codeId);
 
     String getFileNameById(@Param("codeId")int codeId);
+
+    String getMd5ById(@Param("codeId") int codeId);
 }

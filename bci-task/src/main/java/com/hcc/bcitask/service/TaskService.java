@@ -2,6 +2,7 @@ package com.hcc.bcitask.service;
 
 import com.hcc.common.model.R;
 import com.hcc.common.model.dto.TaskDTO;
+import com.hcc.common.model.dto.TaskFinalDTO;
 import com.hcc.common.model.vo.RankVO;
 import com.hcc.common.model.vo.TaskVO;
 
@@ -37,4 +38,6 @@ public interface TaskService {
     void execTaskForFinals(int taskId);
 
     void execAllTaskForFinals(int paradigmId);
+
+    TaskFinalDTO getTaskForFinals(int paradigm, int curPage);
 }

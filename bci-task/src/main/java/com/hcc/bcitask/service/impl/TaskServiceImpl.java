@@ -21,12 +21,14 @@ import com.hcc.common.model.R;
 import com.hcc.common.model.bo.UserInfoBO;
 import com.hcc.common.model.dto.ParadigmDTO;
 import com.hcc.common.model.dto.TaskDTO;
+import com.hcc.common.model.dto.TaskFinalDTO;
 import com.hcc.common.model.entity.ComputeNodeDO;
 import com.hcc.common.model.entity.TaskDO;
 import com.hcc.common.model.entity.TaskFinalDO;
 import com.hcc.common.model.entity.TaskGroupFinalDO;
 import com.hcc.common.model.vo.RankVO;
 import com.hcc.common.model.vo.RecordVo;
+import com.hcc.common.model.vo.TaskFinalVO;
 import com.hcc.common.utils.KeyConvertUtils;
 import com.hcc.common.utils.UserUtils;
 import org.slf4j.Logger;
@@ -384,6 +386,27 @@ public class TaskServiceImpl implements TaskService {
                 commonMapper.updateTaskGroupFinalById(taskGroupFinalDO);
             }
         }
+    }
+
+    @Override
+    public TaskFinalDTO getTaskForFinals(int paradigm, int curPage) {
+        UserInfoBO user = UserUtils.getUser();
+        List<TaskFinalVO> taskFinalVOs = commonMapper.selectTaskFinalByUserIdAndParadigm(
+                user.getUserId(),
+                paradigm,
+                (curPage - 1) * CustomConstants.PageSize.TASK_SIZE,
+                CustomConstants.PageSize.TASK_SIZE
+        );
+
+        for (TaskFinalVO taskFinalVO : taskFinalVOs) {
+            TaskFinalDO taskFinalDO = commonMapper.selectTaskFinalById(taskFinalVO.getId());
+            taskFinalVO.setMd5(codeFeign.getMd5ById(taskFinalDO.getCodeId()));
+        }
+
+        return TaskFinalDTO.builder()
+                .taskFinals(taskFinalVOs)
+                .total(commonMapper.selectCountForFinals(user.getUserId(), paradigm))
+                .build();
     }
 
     private void checkPermissions(UserInfoBO user, int paradigmId) {

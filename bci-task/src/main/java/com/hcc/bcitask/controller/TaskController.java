@@ -158,6 +158,11 @@ public class TaskController {
         return R.ok();
     }
 
+    @GetMapping("/getTaskForFinals")
+    public R getTaskForFinals(@RequestParam("paradigm") int paradigm, @RequestParam(value = "curPage", defaultValue = "1") int curPage) {
+        return R.ok().put("data", taskService.getTaskForFinals(paradigm, curPage));
+    }
+
 
 //======================================以下为内部调用接口==========================================================================================
 
