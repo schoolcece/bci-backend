@@ -136,6 +136,12 @@ public class TaskController {
         return R.ok();
     }
 
+    @PostMapping("/cancelConfirm")
+    public R cancelConfirm(@RequestParam("taskId") int taskId) {
+        taskService.cancelConfirm(taskId);
+        return R.ok();
+    }
+
     /**
      * 决赛任务启动接口
      * @param

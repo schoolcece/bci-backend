@@ -1,5 +1,6 @@
 package com.hcc.bcitask.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.model.*;
@@ -36,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.management.Query;
 import java.io.FileInputStream;
 import java.sql.Timestamp;
 import java.util.*;
@@ -407,6 +409,19 @@ public class TaskServiceImpl implements TaskService {
                 .taskFinals(taskFinalVOs)
                 .total(commonMapper.selectCountForFinals(user.getUserId(), paradigm))
                 .build();
+    }
+
+    @Override
+    public void cancelConfirm(int taskId) {
+        UserInfoBO user = UserUtils.getUser();
+        TaskFinalDO taskFinalDO = commonMapper.selectTaskFinalById(taskId);
+        if (taskFinalDO.getStatus() != 1 || user.getUserId() != taskFinalDO.getUserId()) {
+            throw new RTException(ErrorCodeEnum.NO_PERMISSION.getCode(), ErrorCodeEnum.NO_PERMISSION.getMsg());
+        }
+        taskFinalDO.setComputeNodeIp(null);
+        taskFinalDO.setStatus(0);
+        commonMapper.updateTaskFinalById(taskFinalDO);
+        commonMapper.deleteTaskGroupFinalByTaskId(taskId);
     }
 
     private void checkPermissions(UserInfoBO user, int paradigmId) {
