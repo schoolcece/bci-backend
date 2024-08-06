@@ -73,6 +73,10 @@ public class RedisComponent {
         return Boolean.TRUE.equals(longRedisTemplate.opsForValue().setIfAbsent(key, value, timeout, timeUnit));
     }
 
+    public boolean setIfAbsent(String key, Long value) {
+        return Boolean.TRUE.equals(longRedisTemplate.opsForValue().setIfAbsent(key, value));
+    }
+
     public Long getExpireForLong(String countKey, TimeUnit seconds) {
         return longRedisTemplate.getExpire(countKey, seconds);
     }

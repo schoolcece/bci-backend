@@ -288,6 +288,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void confirmTask(int taskId) {
+        // TODO: 2024/8/5 只允许一个任务确认 ：redis
         UserInfoBO user = UserUtils.getUser();
         //1. 查询任务信息和范式信息
         TaskFinalDO taskFinalDO = commonMapper.selectTaskFinalById(taskId);
@@ -295,6 +296,11 @@ public class TaskServiceImpl implements TaskService {
         //2. 执行任务是否属于当前用户
         if (taskFinalDO.getUserId() != user.getUserId()) {
             throw new RTException(ErrorCodeEnum.NO_PERMISSION.getCode(), ErrorCodeEnum.NO_PERMISSION.getMsg());
+        }
+
+        String taskingKey = KeyConvertUtils.taskingKeyConvert(taskFinalDO.getTeamId(), taskFinalDO.getParadigmId());
+        if (!redisComponent.setIfAbsent(taskingKey, 1L)) {
+            throw new RTException(ErrorCodeEnum.HAS_TASK_RUNNING.getCode(), ErrorCodeEnum.HAS_TASK_RUNNING.getMsg());
         }
         //3. 获取代码信息
         String codeUrl = codeFeign.getCodeUrlById(taskFinalDO.getCodeId());
@@ -422,6 +428,8 @@ public class TaskServiceImpl implements TaskService {
         taskFinalDO.setStatus(0);
         commonMapper.updateTaskFinalById(taskFinalDO);
         commonMapper.deleteTaskGroupFinalByTaskId(taskId);
+        String taskingKey = KeyConvertUtils.taskingKeyConvert(taskFinalDO.getTeamId(), taskFinalDO.getParadigmId());
+        redisComponent.deleteForLong(taskingKey);
     }
 
     private void checkPermissions(UserInfoBO user, int paradigmId) {
