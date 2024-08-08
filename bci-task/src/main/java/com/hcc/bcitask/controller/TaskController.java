@@ -164,6 +164,12 @@ public class TaskController {
         return R.ok();
     }
 
+    @PostMapping("/stopAllTaskForFinals")
+    public R stopAllTaskForFinals(@RequestParam("paradigmId") int paradigmId) {
+        taskService.stopAllTaskForFinals(paradigmId);
+        return R.ok();
+    }
+
     @GetMapping("/getTaskForFinals")
     public R getTaskForFinals(@RequestParam("paradigm") int paradigm, @RequestParam(value = "curPage", defaultValue = "1") int curPage) {
         return R.ok().put("data", taskService.getTaskForFinals(paradigm, curPage));

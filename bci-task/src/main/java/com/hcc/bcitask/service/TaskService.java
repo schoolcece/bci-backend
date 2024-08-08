@@ -42,4 +42,6 @@ public interface TaskService {
     TaskFinalDTO getTaskForFinals(int paradigm, int curPage);
 
     void cancelConfirm(int taskId);
+
+    void stopAllTaskForFinals(int paradigmId);
 }
