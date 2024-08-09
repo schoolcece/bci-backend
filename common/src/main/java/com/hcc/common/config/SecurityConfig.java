@@ -35,6 +35,8 @@ public class SecurityConfig {
                         .requestMatchers("/event/listEvent").permitAll()
                         .requestMatchers("/task/updateScore").permitAll()
                         .requestMatchers("/team/listTeamByParadigm").permitAll()
+                        .requestMatchers("/team/execAllTaskForFinals").permitAll()
+                        .requestMatchers("/team/stopAllTaskForFinals").permitAll()
                         .anyRequest().authenticated());
         http.csrf(AbstractHttpConfigurer::disable);
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
