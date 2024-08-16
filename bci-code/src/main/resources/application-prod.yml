@@ -6,12 +6,12 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 10.101.169.213:8848
+        server-addr: nacos:8848
       config:
-        server-addr: 10.101.169.213:8848
+        server-addr: nacos:8848
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://10.101.169.213:3306/bci?useSSL=false&serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8
+    url: jdbc:mysql://mysql:3306/bci?useSSL=false&serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8
     username: root
     password: 123456
     type: com.zaxxer.hikari.HikariDataSource
@@ -21,7 +21,7 @@ spring:
       idle-timeout: 30000
   data:
     redis:
-      host: 10.101.169.213
+      host: redis
       port: 6379
 
 bci:
