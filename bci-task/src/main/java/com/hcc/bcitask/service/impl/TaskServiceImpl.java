@@ -313,7 +313,7 @@ public class TaskServiceImpl implements TaskService {
             TaskGroupFinalDO taskGroupFinalDO = TaskGroupFinalDO.builder()
                     .taskId(taskFinalDO.getId())
                     .groupId(groupid)
-                    .containerName("team_" + user.getTeamInfoMap().get(paradigmInfo.getEventId()).getTeamId() + ".group_" + groupid)
+                    .containerName("team_" + (user.getTeamInfoMap().get(paradigmInfo.getEventId()).getTeamId() - 1) + ".group_" + groupid)
                     .build();
 
             //5. 获取计算节点并创建三个容器
