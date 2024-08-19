@@ -328,7 +328,7 @@ public class TaskServiceImpl implements TaskService {
                         .withDockerCmdExecFactory(new NettyDockerCmdExecFactory())
                         .build();
                 HostConfig hostConfig = new HostConfig();
-//                setGpu(hostConfig);
+                setGpu(hostConfig);
                 container = dockerClient.createContainerCmd(paradigmInfo.getImage())
                         .withEnv("COMPONENT_ID=" + taskGroupFinalDO.getContainerName(), "TEAM_NAME=" + authFeign.getTeamName(user.getTeamInfoMap().get(paradigmInfo.getEventId()).getTeamId()), "ALGORITHM_NUMBER=" + groupid)
                         .withHostConfig(hostConfig)
