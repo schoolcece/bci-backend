@@ -92,7 +92,7 @@ public class CodeServiceImpl extends ServiceImpl<CodeMapper, CodeDO> implements 
 
             CodeDO codeDO = CodeDO.builder()
                     .paradigmId(paradigmId)
-                    .url(userFile.getAbsolutePath())
+                    .url(userFile.getParent())
                     .userId(user.getUserId())
                     .fileName(filename)
                     .md5(md5DigestAsHex)
