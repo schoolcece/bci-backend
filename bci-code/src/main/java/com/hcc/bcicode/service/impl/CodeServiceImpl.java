@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -60,28 +61,40 @@ public class CodeServiceImpl extends ServiceImpl<CodeMapper, CodeDO> implements 
         // 3.文件MD5检验（如存在相同文件则无需再保存文件，todo： 相同文件属于不同用户发出预警）
         try {
             String md5DigestAsHex = DigestUtils.md5DigestAsHex(file.getBytes());
+            String filename = file.getOriginalFilename();
+
+            // 当前用户保存路径
+            String savePath = codeConfig.getUrl() + "/" + paradigmId + "/" + user.getUserId() + "/" + md5DigestAsHex;
+            File userDir = new File(savePath);
+            if (!userDir.exists()) userDir.mkdirs();
+
+            File userFile = new File(userDir, filename);
+
             List<CodeDO> codeExists = codeMapper.selectList(new QueryWrapper<CodeDO>().eq("md5", md5DigestAsHex));
-            String savePath = codeConfig.getUrl();
+
             if (codeExists.isEmpty()) {
-                // 4. 保存代码文件
-                savePath +=  "/" + paradigmId + "/" + user.getUserId() + "/" + md5DigestAsHex;
-                File filePath = new File(savePath, "code.tar.gz");
-                if (!filePath.exists()) {
-                    if(!filePath.mkdirs()) {
-                        throw new RTException(ErrorCodeEnum.SYSTEM_ERROR.getCode(), ErrorCodeEnum.SYSTEM_ERROR.getMsg());
-                    }
-                }
-                file.transferTo(filePath);
+                // 没有相同文件，直接保存
+                file.transferTo(userFile);
             } else {
-                savePath = codeExists.get(0).getUrl();
-                logger.warn("上传相同代码警告，相关代码信息：{}, {}", JSONObject.toJSONString(codeExists), 1);
+                String existingPath = codeExists.get(0).getUrl();
+                File existingFile = new File(existingPath);
+
+                if (!existingFile.exists()) {
+                    throw new RTException(ErrorCodeEnum.SYSTEM_ERROR.getCode(), "已有记录的文件不存在，无法创建链接");
+                }
+
+                if (!userFile.exists()) {
+                    Files.createSymbolicLink(userFile.toPath(), existingFile.toPath());
+                }
+
+                logger.warn("相同代码上传警告：用户 [{}]，软链接指向已有文件 [{}]", user.getUserId(), existingPath);
             }
-            // 5. 插入数据库信息
+
             CodeDO codeDO = CodeDO.builder()
                     .paradigmId(paradigmId)
-                    .url(savePath)
+                    .url(userFile.getAbsolutePath())
                     .userId(user.getUserId())
-                    .fileName("code.tar.gz")
+                    .fileName(filename)
                     .md5(md5DigestAsHex)
                     .build();
             codeMapper.insert(codeDO);
