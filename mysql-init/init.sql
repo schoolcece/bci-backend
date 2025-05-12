@@ -26,10 +26,10 @@ ALTER TABLE
     `bci_event` comment '赛事表';
 
 insert into bci_event (event_name, event_leader, event_desc, logo_url, start_time, end_time)
-values ('python赛事', 1, 'python算法提交', 'gdf', '2024-06-01', '2024-07-31');
+values ('python赛事', 1, 'python算法提交', 'gdf', '2025-05-01', '2026-07-31');
 
 insert into bci_event (event_name, event_leader, event_desc, logo_url, start_time, end_time)
-values ('matlab赛事', 1, 'matlab算法提交', 'gdf', '2024-06-01', '2024-07-31');
+values ('matlab赛事', 1, 'matlab算法提交', 'gdf', '2025-05-01', '2026-07-31');
 
 CREATE TABLE `bci_paradigm`(
                                `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -123,9 +123,9 @@ ALTER TABLE
     `bci_application` comment '报名参赛表';
 
 
-insert into bci.bci_user (id, username, mobile, email, university, profession, uid, birthday, role) values (null, 'hcc', '15735181737', '1301646502@qq.com', 'byut', '电子信息', 'hcc1573518', '1996-09-18', 1);
+insert into bci.bci_user (id, username, mobile, email, university, profession, uid, birthday, role) values (null, 'admin', '13664355687', 'episodexiii@163.com', 'bupt', '电子信息', 'admin', '2000-01-01', 1);
 
-insert into bci.bci_user (id, username, mobile, email, university, profession, uid, birthday, role) values (null, 'hxx', '15735181737', '1301646502@qq.com', 'byut', '电子信息', 'hcc1573518', '1996-09-18', 0);
+insert into bci.bci_user (id, username, mobile, email, university, profession, uid, birthday, role) values (null, 'user1', '13664355687', 'episodexiii@163.com', 'bupt', '电子信息', 'user1', '2000-01-01', 0);
 
 CREATE TABLE `bci_code`(
                            `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -178,3 +178,16 @@ CREATE TABLE `bci_container_log`(
 );
 ALTER TABLE
     `bci_container_log` comment '容器日志表';
+
+CREATE TABLE `bci_file` (
+                            `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                            `paradigm_id` INT NOT NULL COMMENT '所属范式 ID',
+                            `url` VARCHAR(255) NOT NULL COMMENT '文件路径',
+                            `user_id` INT NOT NULL COMMENT '上传用户 ID',
+                            `file_name` VARCHAR(255) NOT NULL COMMENT '文件名',
+                            `md5` VARCHAR(64) NOT NULL COMMENT '文件 MD5',
+                            `file_size` BIGINT NOT NULL COMMENT '文件大小（字节）',
+                            `file_type` VARCHAR(50) NOT NULL COMMENT '文件类型',
+                            `description` TEXT COMMENT '文件描述',
+                            `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '上传时间'
+) COMMENT='用户上传文件表';
