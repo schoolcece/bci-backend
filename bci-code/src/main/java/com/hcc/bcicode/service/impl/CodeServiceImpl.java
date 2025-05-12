@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -76,20 +77,30 @@ public class CodeServiceImpl extends ServiceImpl<CodeMapper, CodeDO> implements 
                 // 没有相同文件，直接保存
                 file.transferTo(userFile);
             } else {
-                String existingPath = codeExists.get(0).getUrl();
+                // 存在相同文件，准备创建软链接
+                String existingPath = codeExists.get(0).getUrl() + "/" + codeExists.get(0).getFileName();
                 File existingFile = new File(existingPath);
 
                 if (!existingFile.exists()) {
                     throw new RTException(ErrorCodeEnum.SYSTEM_ERROR.getCode(), "已有记录的文件不存在，无法创建链接");
                 }
 
-                if (!userFile.exists()) {
-                    Files.createSymbolicLink(userFile.toPath(), existingFile.toPath());
+                // 如果 userFile 是目录或已存在，删除它（防止软链接失败）
+                if (userFile.exists()) {
+                    if (userFile.isDirectory()) {
+                        FileSystemUtils.deleteRecursively(userFile);
+                    } else {
+                        Files.delete(userFile.toPath());
+                    }
                 }
+
+                // 创建软链接
+                Files.createSymbolicLink(userFile.toPath(), existingFile.toPath());
 
                 logger.warn("相同代码上传警告：用户 [{}]，软链接指向已有文件 [{}]", user.getUserId(), existingPath);
             }
 
+            // 保存元数据到数据库
             CodeDO codeDO = CodeDO.builder()
                     .paradigmId(paradigmId)
                     .url(userFile.getParent())
