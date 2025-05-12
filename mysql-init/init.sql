@@ -185,7 +185,6 @@ CREATE TABLE `bci_file` (
                             `url` VARCHAR(255) NOT NULL COMMENT '文件路径',
                             `user_id` INT NOT NULL COMMENT '上传用户 ID',
                             `file_name` VARCHAR(255) NOT NULL COMMENT '文件名',
-                            `md5` VARCHAR(64) NOT NULL COMMENT '文件 MD5',
                             `file_size` BIGINT NOT NULL COMMENT '文件大小（字节）',
                             `file_type` VARCHAR(50) NOT NULL COMMENT '文件类型',
                             `description` TEXT COMMENT '文件描述',
