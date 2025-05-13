@@ -52,6 +52,12 @@ spring:
           filters:
             - RewritePath=/task/(?<segment>/?.*), /task/$\{segment}
 
+        - id: file_route
+          uri: lb://bci-file
+          predicates:
+            - Path=/file/**
+          filters:
+            - RewritePath=/file/(?<segment>/?.*), /file/$\{segment}
 
 server:
   port: 88
