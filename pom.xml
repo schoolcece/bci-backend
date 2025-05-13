@@ -17,5 +17,6 @@
         <module>bci-component</module>
         <module>bci-competition</module>
         <module>bci-gateway</module>
+        <module>bci-file</module>
     </modules>
 </project>
