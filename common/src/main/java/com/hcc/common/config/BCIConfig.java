@@ -49,5 +49,11 @@ public interface BCIConfig {
         private int maxMember;
     }
 
+    @Configuration
+    @ConfigurationProperties("bci.file")
+    @Data
+    class FileConfig {
+        private String url;
+    }
 
 }

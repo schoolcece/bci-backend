@@ -36,7 +36,7 @@ public class FileDO {
     /**
      * 上传用户id
      */
-    private int userid;
+    private int userId;
 
     /**
      * 文件名
