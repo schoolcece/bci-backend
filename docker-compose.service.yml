@@ -45,5 +45,14 @@ services:
     networks:
       - my-network
 
+  bci-file:
+    build:
+      context: ./bci-file
+      dockerfile: Dockerfile
+    volumes:
+      - /nfs/file:/nfs/file
+    networks:
+      - my-network
+
 networks:
   my-network:
