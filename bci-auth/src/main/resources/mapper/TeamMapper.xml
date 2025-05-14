@@ -57,5 +57,17 @@
         from bci_team
         where id = #{teamId}
     </select>
+    <select id="countTeamIdsByParadigmAndStatus" resultType="int">
+        SELECT COUNT(*)
+        FROM bci_application
+        WHERE paradigm_id = #{paradigm} AND status = 1
+    </select>
+    <select id="selectTeamIdsByParadigmAndStatusWithPagination" resultType="int">
+        SELECT team_id
+        FROM bci_application
+        WHERE paradigm_id = #{paradigm} AND status = 1
+        ORDER BY team_id
+            LIMIT #{limit} OFFSET #{offset}
+    </select>
 
 </mapper>

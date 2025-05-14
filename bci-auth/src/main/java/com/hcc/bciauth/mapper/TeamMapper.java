@@ -49,4 +49,8 @@ public interface TeamMapper extends BaseMapper<TeamDO> {
     List<Integer> selectTeamIdsByParadigmAndStatus(@Param("paradigm")int paradigm);
 
     TeamDO selectTeamByID(@Param("teamId")int teamId);
+
+    int countTeamIdsByParadigmAndStatus(@Param("paradigm")int paradigm);
+
+    List<Integer> selectTeamIdsByParadigmAndStatusWithPagination(@Param("paradigm")int paradigm, @Param("offset")int offset, @Param("limit")int pageSize);
 }

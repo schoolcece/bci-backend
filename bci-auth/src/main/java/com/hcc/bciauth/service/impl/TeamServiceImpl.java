@@ -298,14 +298,16 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
     }
 
     @Override
-    public TeamDTO listTeamByParadigm(int event, int paradigm) {
-        List<Integer> teamIds = teamMapper.selectTeamIdsByParadigmAndStatus(paradigm);
-        List<TeamVO> teamVOS = teamIds.stream()
+    public TeamDTO listTeamByParadigm(int paradigm, int curPage, int pageSize) {
+        int total = teamMapper.countTeamIdsByParadigmAndStatus(paradigm);
+        int offset = (curPage - 1) * pageSize;
+        List<Integer> teamIds = teamMapper.selectTeamIdsByParadigmAndStatusWithPagination(paradigm, offset, pageSize);
+
+        List<TeamVO> teamVOs = teamIds.stream()
                 .map(teamId -> teamMapper.selectTeamByID(teamId))
                 .filter(teamDO -> teamDO != null && teamDO.getStatus() == 0)
                 .map(teamDO -> {
                     UserDO leader = userMapper.selectUserById(teamDO.getLeaderId());
-
                     List<String> members = userTeamMapper.selectMembersNameByTeamId(teamDO.getId());
 
                     return TeamVO.builder()
@@ -321,8 +323,8 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
                 .collect(Collectors.toList());
 
         return TeamDTO.builder()
-                .teams(teamVOS)
-                .total(teamVOS.size())
+                .teams(teamVOs)
+                .total(total)
                 .build();
     }
 

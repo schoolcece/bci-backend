@@ -75,5 +75,5 @@ public interface TeamService extends IService<TeamDO> {
     String getTeamName(int teamId);
 
 
-    TeamDTO listTeamByParadigm(int event, int paradigm);
+    TeamDTO listTeamByParadigm(int paradigm, int curPage, int pageSize);
 }
