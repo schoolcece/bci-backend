@@ -61,7 +61,7 @@ public class TaskController {
     @GetMapping("/getTask")
     public R getTask(@RequestParam("paradigm") int paradigm, @RequestParam(value = "curPage", defaultValue = "1") int curPage) {
         UserInfoBO user = UserUtils.getUser();
-        return R.ok().put("data", taskService.getTask(paradigm, curPage)).put("running", redisComponent.hasKey(KeyConvertUtils.taskingKeyConvert(user.getTeamInfoMap().get(paradigm<=5?1:2).getTeamId(), paradigm)));
+        return R.ok().put("data", taskService.getTask(paradigm, curPage)).put("running", redisComponent.hasKey(KeyConvertUtils.taskingKeyConvert(user.getTeamInfoMap().get(paradigm).getTeamId(), paradigm)));
     }
 
     /**
