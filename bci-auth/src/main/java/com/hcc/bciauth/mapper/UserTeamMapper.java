@@ -23,4 +23,6 @@ public interface UserTeamMapper extends BaseMapper<UserTeamDO> {
     List<UserInfoVO> selectTeamMembersByTeamId(@Param("teamId")int teamId);
 
     List<String> selectMembersNameByTeamId(@Param("teamId")int teamId);
+
+    String selectTeamNameByUserIdAndEvent(@Param("userId") int userId, @Param("event") int event);
 }

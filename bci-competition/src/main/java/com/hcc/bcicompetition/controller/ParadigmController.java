@@ -41,4 +41,9 @@ public class ParadigmController {
     ParadigmDTO getInfoByParadigmId(@RequestParam("paradigmId")int paradigmId) {
         return paradigmService.getInfoByParadigmId(paradigmId);
     }
+
+    @GetMapping("/getEventByParadigm")
+    public int getEventByParadigm(@RequestParam("paradigmId") int paradigmId) {
+        return paradigmService.getEventByParadigm(paradigmId);
+    }
 }

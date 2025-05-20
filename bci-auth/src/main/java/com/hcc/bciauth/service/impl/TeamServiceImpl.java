@@ -84,6 +84,7 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
                 .build();
         teamMapper.insert(teamDO);
         UserTeamDO userTeamDO = UserTeamDO.builder()
+                .eventId(createTeamParam.getEventId())
                 .status(CustomConstants.UserTeamRelationStatus.APPROVED)
                 .teamId(teamDO.getId())
                 .userId(user.getUserId())
@@ -326,6 +327,11 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
                 .teams(teamVOs)
                 .total(total)
                 .build();
+    }
+
+    @Override
+    public String getTeamNameByUserIdAndEvent(int userId, int event) {
+        return userTeamMapper.selectTeamNameByUserIdAndEvent(userId, event);
     }
 
     @Override

@@ -37,4 +37,9 @@ public class ParadigmServiceImpl implements ParadigmService {
     public ParadigmDTO getInfoByParadigmId(int paradigmId) {
         return paradigmMapper.selectByParadigmId(paradigmId);
     }
+
+    @Override
+    public int getEventByParadigm(int paradigmId) {
+        return paradigmMapper.selectEventByParadigm(paradigmId);
+    }
 }

@@ -1,5 +1,8 @@
 package com.hcc.bcifile.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.hcc.bcifile.feign.AuthFeign;
+import com.hcc.bcifile.feign.CompetitionFeign;
 import com.hcc.bcifile.mapper.FileMapper;
 import com.hcc.bcifile.service.FileService;
 import com.hcc.common.config.BCIConfig;
@@ -7,7 +10,10 @@ import com.hcc.common.constant.CustomConstants;
 import com.hcc.common.enums.ErrorCodeEnum;
 import com.hcc.common.exception.RTException;
 import com.hcc.common.model.bo.UserInfoBO;
+import com.hcc.common.model.dto.FileDTO;
 import com.hcc.common.model.entity.FileDO;
+import com.hcc.common.model.vo.FileVO;
+import com.hcc.common.utils.FileUtils;
 import com.hcc.common.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +23,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class FileServiceImpl implements FileService {
@@ -29,6 +37,12 @@ public class FileServiceImpl implements FileService {
 
     @Autowired
     private BCIConfig.FileConfig fileConfig;
+
+    @Autowired
+    private AuthFeign authFeign;
+
+    @Autowired
+    private CompetitionFeign competitionFeign;
 
     @Override
     public void uploadFile(int paradigmId, MultipartFile file) {
@@ -78,6 +92,29 @@ public class FileServiceImpl implements FileService {
             logger.error("文件上传失败", e);
             throw new RTException(ErrorCodeEnum.SYSTEM_ERROR.getCode(), ErrorCodeEnum.SYSTEM_ERROR.getMsg());
         }
+    }
+
+    @Override
+    public FileDTO listFileByParadigm(int paradigmId, int curPage) {
+        UserInfoBO user = UserUtils.getUser();
+        if (!user.isAdmin()) {
+            throw new RTException(ErrorCodeEnum.NO_PERMISSION.getCode(), ErrorCodeEnum.NO_PERMISSION.getMsg());
+        }
+        List<FileDO> fileDOs = fileMapper.selectPageByParadigm(paradigmId, (curPage - 1) * CustomConstants.PageSize.FILE_SIZE, CustomConstants.PageSize.FILE_SIZE);
+        List<FileVO> fileVOs = fileDOs.stream().map(fileDO -> {
+            String teamName = authFeign.getTeamNameByUserIdAndEvent(fileDO.getUserId(), competitionFeign.getEventByParadigm(paradigmId));
+            return FileVO.builder()
+                    .id(fileDO.getId())
+                    .fileName(fileDO.getFileName())
+                    .fileSize(FileUtils.formatFileSize(fileDO.getFileSize()))
+                    .teamName(teamName)
+                    .build();
+        }).collect(Collectors.toList());
+
+        return FileDTO.builder()
+                .files(fileVOs)
+                .total(fileMapper.selectCount(new QueryWrapper<FileDO>().eq("paradigm_id", paradigmId)))
+                .build();
     }
 
     private void checkPermissions(UserInfoBO user, int paradigmId) {

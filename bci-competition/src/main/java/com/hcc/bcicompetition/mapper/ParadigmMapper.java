@@ -16,4 +16,6 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface ParadigmMapper extends BaseMapper<ParadigmDO> {
     ParadigmDTO selectByParadigmId(@Param("paradigmId") int paradigmId);
+
+    int selectEventByParadigm(int paradigmId);
 }

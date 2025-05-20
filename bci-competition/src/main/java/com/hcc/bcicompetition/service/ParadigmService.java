@@ -20,4 +20,6 @@ public interface ParadigmService {
     List<ParadigmVO> listParadigm(int eventId);
 
     ParadigmDTO getInfoByParadigmId(int paradigmId);
+
+    int getEventByParadigm(int paradigmId);
 }

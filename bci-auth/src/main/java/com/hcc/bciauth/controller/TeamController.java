@@ -189,4 +189,9 @@ public class TeamController {
     String getTeamName(@RequestParam("teamId")int teamId){
         return teamService.getTeamName(teamId);
     }
+
+    @GetMapping("/getTeamNameByUserIdAndEvent")
+    String getTeamNameByUserIdAndEvent(@RequestParam("userId")int userId, @RequestParam("event") int event) {
+        return teamService.getTeamNameByUserIdAndEvent(userId, event);
+    }
 }

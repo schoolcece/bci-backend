@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hcc.bcifile.mapper.FileMapper">
+    <select id="selectPageByParadigm" resultType="com.hcc.common.model.entity.FileDO">
+        select id, user_id, file_name, file_size
+        from bci_file
+        where paradigm_id = #{paradigmId}
+        order by id desc
+        limit #{index}, #{pageNum}
+    </select>
+</mapper>

@@ -22,4 +22,13 @@
         from bci_user u join bci_user_team ut on u.id = ut.user_id
         where ut.team_id = #{teamId} and ut.status = 1
     </select>
+    <select id="selectTeamNameByUserIdAndEvent" resultType="java.lang.String">
+        SELECT t.team_name
+        FROM bci_team t
+        JOIN bci_user_team ut ON t.id = ut.team_id
+        WHERE ut.user_id = #{userId}
+          AND ut.event_id = #{event}
+          AND ut.status = 1
+            LIMIT 1
+    </select>
 </mapper>

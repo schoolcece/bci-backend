@@ -7,4 +7,9 @@
         from bci_paradigm
         where id = #{paradigmId}
     </select>
+    <select id="selectEventByParadigm" resultType="java.lang.Integer">
+        select event_id
+        from bci_paradigm
+        where id = #{paradigmId}
+    </select>
 </mapper>
