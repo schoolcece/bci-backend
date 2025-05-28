@@ -42,6 +42,10 @@ public interface TeamMapper extends BaseMapper<TeamDO> {
 
     List<TeamInfoVO> getTeamInfo(@Param("event")int event, @Param("paradigm")int paradigm);
 
+    List<TeamInfoVO> selectAuditedTeamsByEvent(@Param("event")int event, @Param("index")int index, @Param("pageSize")int pageSize);
+
+    Long countAuditedTeamsByEvent(@Param("event") int event);
+    
     void updateAppStatusByTeamId(@Param("teamId")int teamId, @Param("paradigm")int paradigm, @Param("status")int status);
 
     String selectTeamNameByTeamId(@Param("teamId")int teamId);

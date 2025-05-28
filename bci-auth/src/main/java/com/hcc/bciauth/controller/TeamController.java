@@ -127,6 +127,18 @@ public class TeamController {
     }
 
     /**
+         * 获取已审核队伍信息
+         * @param event
+         * @param curPage
+         * @return
+         */
+        @GetMapping("/getAuditedTeams")
+        public R getAuditedTeams(@RequestParam int event,
+                                @RequestParam(value = "curPage", defaultValue = "1") int curPage) {
+            return R.ok().put("data", teamService.getAuditedTeams(event, curPage));
+        }
+
+    /**
      * 获取队伍成员信息
      * @param eventId
      * @return

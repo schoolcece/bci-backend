@@ -64,6 +64,8 @@ public interface TeamService extends IService<TeamDO> {
 
     Page<TeamInfoVO> getAllTeamInfos(int event, int curPage, String teamName);
 
+    Page<TeamInfoVO> getAuditedTeams(int event, int curPage);
+
     List<UserInfoVO> getTeamMembers(int eventId);
 
     List<TeamInfoVO> getTeamInfo(int event, int paradigm);

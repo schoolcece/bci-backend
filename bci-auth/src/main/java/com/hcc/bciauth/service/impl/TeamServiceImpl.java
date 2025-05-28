@@ -269,6 +269,14 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, TeamDO> implements 
     }
 
     @Override
+    public Page<TeamInfoVO> getAuditedTeams(int event, int curPage) {
+        return Page.<TeamInfoVO>builder()
+                .record(teamMapper.selectAuditedTeamsByEvent(event, (curPage-1)*CustomConstants.PageSize.TEAM_SIZE, CustomConstants.PageSize.TEAM_SIZE))
+                .total(teamMapper.countAuditedTeamsByEvent(event))
+                .build();
+    }
+
+    @Override
     public List<UserInfoVO> getTeamMembers(int eventId) {
         UserInfoBO user = UserUtils.getUser();
         UserInfoBO.TeamInfo teamInfo = user.getTeamInfoMap().get(eventId);
