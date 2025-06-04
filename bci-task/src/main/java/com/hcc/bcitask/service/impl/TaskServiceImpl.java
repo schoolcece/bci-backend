@@ -178,6 +178,66 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    public void stopRunningTask(int taskId) {
+        UserInfoBO user = UserUtils.getUser();
+        // 1. 查询任务信息
+        TaskDO taskDO = commonMapper.selectTaskById(taskId);
+        
+        // 2. 鉴权：检查任务是否属于当前用户
+        if (taskDO.getUserId() != user.getUserId()) {
+            throw new RTException(ErrorCodeEnum.NO_PERMISSION.getCode(), ErrorCodeEnum.NO_PERMISSION.getMsg());
+        }
+        
+        // 3. 检查任务是否处于运行状态
+        if (taskDO.getStatus() != CustomConstants.BCITaskStatus.PROCESSING) {
+            throw new RTException(ErrorCodeEnum.TASK_NOT_RUNNING.getCode(), ErrorCodeEnum.TASK_NOT_RUNNING.getMsg());
+        }
+        
+        // 4. 获取计算节点IP和容器ID
+        String computeNodeIp = taskDO.getComputeNodeIp();
+        String containerId = taskDO.getContainerId();
+        
+        if (computeNodeIp == null || containerId == null) {
+            throw new RTException(ErrorCodeEnum.TASK_INFO_ERROR.getCode(), ErrorCodeEnum.TASK_INFO_ERROR.getMsg());
+        }
+        
+        // 5. 创建Docker客户端连接
+        DockerClient dockerClient = null;
+        try {
+            DefaultDockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
+                    .withDockerHost("tcp://" + computeNodeIp + ":2375")
+                    .build();
+            dockerClient = DockerClientBuilder
+                    .getInstance(config)
+                    .withDockerCmdExecFactory(new NettyDockerCmdExecFactory())
+                    .build();
+
+            // 6. 停止容器
+            dockerClient.stopContainerCmd(containerId).exec();
+            logger.info("用户手动停止任务，任务ID: {}, 容器ID: {}", taskId, containerId);
+
+            // 7. 更新任务状态为已完成
+            taskDO.setStatus(CustomConstants.BCITaskStatus.SUCCESS);
+            commonMapper.updateStatusById(taskDO);
+            
+            // 8. 释放计算节点资源
+            commonMapper.usedNodeByIp(computeNodeIp);
+
+            //8. 关闭该次任务资源
+            dockerClient.close();
+
+            // 10. 释放Redis中的任务锁，移除队伍正运行任务的标志
+            String taskingKey = KeyConvertUtils.taskingKeyConvert(taskDO.getTeamId(), taskDO.getParadigmId());
+            redisComponent.deleteForLong(taskingKey);
+            
+        } catch (Exception e) {
+            logger.error("停止任务失败，任务ID: {}, 原因: {}", taskId, e.getLocalizedMessage());
+            throw new RTException(ErrorCodeEnum.STOP_TASK_FAILED.getCode(), ErrorCodeEnum.STOP_TASK_FAILED.getMsg());
+        }
+    }
+        
+
+    @Override
     public void updateScoreById(int taskId, float score) {
         //1. 内部调用密钥校验
 //        UserInfoBO user = UserUtils.getUser();

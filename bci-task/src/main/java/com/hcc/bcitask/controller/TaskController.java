@@ -113,6 +113,18 @@ public class TaskController {
         return R.ok().put("content", taskService.getLog(taskId));
     }
 
+    /**
+     * 停止正在运行的任务
+     * @param taskId
+     * @return
+     */
+    @Loggable("停止任务")
+    @PostMapping("/stopTask")
+    public R stopTask(@RequestParam("taskId") int taskId) {
+        taskService.stopRunningTask(taskId);
+        return R.ok();
+    }
+
 
 //======================================以下为内部调用接口==========================================================================================
 

@@ -41,7 +41,13 @@ public enum ErrorCodeEnum {
     // 2.10 代码异常
     CODE_NOT_EXIST(100410, "代码解析失败，请检查代码格式"),
     // 2.11 用户已存在
-    USER_ALREADY_EXITS(100411, "用户已存在");
+    USER_ALREADY_EXITS(100411, "用户已存在"),
+    // 2.12 任务未在运行中
+    TASK_NOT_RUNNING(100412, "任务未在运行中"),
+    // 2.13 任务信息错误
+    TASK_INFO_ERROR(100413, "任务信息错误"),
+    // 2.14 停止任务失败
+    STOP_TASK_FAILED(100414, "停止任务失败");
 
 
 

@@ -29,4 +29,6 @@ public interface TaskService {
     R record(int teamId, int paradigm, int dataset, int curPage);
 
     String getLog(int taskId);
+
+    void stopRunningTask(int taskId);
 }
