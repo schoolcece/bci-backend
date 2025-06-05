@@ -39,6 +39,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
+
 /**
  * Description: service层具体实现 任务相关操作
  *
@@ -200,7 +201,7 @@ public class TaskServiceImpl implements TaskService {
         if (computeNodeIp == null || containerId == null) {
             throw new RTException(ErrorCodeEnum.TASK_INFO_ERROR.getCode(), ErrorCodeEnum.TASK_INFO_ERROR.getMsg());
         }
-        
+
         // 5. 创建Docker客户端连接
         DockerClient dockerClient = null;
         try {
@@ -211,6 +212,16 @@ public class TaskServiceImpl implements TaskService {
                     .getInstance(config)
                     .withDockerCmdExecFactory(new NettyDockerCmdExecFactory())
                     .build();
+        
+            // 5.1判断容器状态
+            String containerStatus = dockerClient.inspectContainerCmd(containerId).exec().getState().getStatus();
+            if ("created".equals(containerStatus) ||"exited".equals(containerStatus)) {
+                logger.info("用户手动停止任务，任务ID: {}, 容器ID: {}, 容器处于仅创建或退出状态", taskId, containerId);
+            }
+            else{
+                dockerClient.stopContainerCmd(containerId).exec();
+                logger.info("用户手动停止任务，任务ID: {}, 容器ID: {}", taskId, containerId);
+            }
 
             // 6. 停止容器
             dockerClient.stopContainerCmd(containerId).exec();

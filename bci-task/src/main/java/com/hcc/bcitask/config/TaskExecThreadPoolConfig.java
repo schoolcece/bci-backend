@@ -19,7 +19,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class TaskExecThreadPoolConfig {
     private static final int CORE_POOL_SIZE = 10;
 
-    private static final int MAX_POOL_SIZE = 20;
+    private static final int MAX_POOL_SIZE = 50;
 
     private static final int QUEUE_CAPACITY = 200;
 
