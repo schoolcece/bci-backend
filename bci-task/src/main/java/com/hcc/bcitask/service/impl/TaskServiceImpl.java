@@ -213,7 +213,7 @@ public class TaskServiceImpl implements TaskService {
                     .withDockerCmdExecFactory(new NettyDockerCmdExecFactory())
                     .build();
         
-            // 5.1判断容器状态
+            // 6 判断容器状态，停止容器
             String containerStatus = dockerClient.inspectContainerCmd(containerId).exec().getState().getStatus();
             if ("created".equals(containerStatus) ||"exited".equals(containerStatus)) {
                 logger.info("用户手动停止任务，任务ID: {}, 容器ID: {}, 容器处于仅创建或退出状态", taskId, containerId);
@@ -222,10 +222,6 @@ public class TaskServiceImpl implements TaskService {
                 dockerClient.stopContainerCmd(containerId).exec();
                 logger.info("用户手动停止任务，任务ID: {}, 容器ID: {}", taskId, containerId);
             }
-
-            // 6. 停止容器
-            dockerClient.stopContainerCmd(containerId).exec();
-            logger.info("用户手动停止任务，任务ID: {}, 容器ID: {}", taskId, containerId);
 
             // 7. 更新任务状态为已完成
             taskDO.setStatus(CustomConstants.BCITaskStatus.SUCCESS);
