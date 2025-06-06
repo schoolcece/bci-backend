@@ -83,11 +83,17 @@ public class AsyncTask {
                                 }
                                 logContent.append(item.toString()
                                         .replaceFirst("STDERR:","\n"));
+                                // 算法运行成功， 停止容器
+                                dockerClient.stopContainerCmd(task.getContainerId()).exec();
+                                logger.info("检测到[SUCCESS]日志，已主动停止容器: {}", task.getContainerId());
                             }
                             if ((item.toString().contains("ERROR") || item.toString().contains("Error")) && !item.toString().contains("grpc"))
                             {
                                 logContent.append(item.toString()
                                         .replaceFirst("STDERR:","\n"));
+                                // 算法运行失败， 停止容器
+                                dockerClient.stopContainerCmd(task.getContainerId()).exec();
+                                logger.info("检测到[ERROR]日志，已主动停止容器: {}", task.getContainerId());
                             }
                         }
                     }).awaitCompletion();
