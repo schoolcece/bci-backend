@@ -364,6 +364,7 @@ public class TaskServiceImpl implements TaskService {
 
     private void setFileBinds(HostConfig hostConfig, String dataUrl, int paradigmId) {
         hostConfig.withBinds(new Bind(dataUrl,new Volume(taskConfig.getDataPath().get(paradigmId)))
+                  , new Bind("/nfs/whl/torch_cpu", new Volume("/whl/torch"))
 //                , new Bind("/usr/local/cuda", new Volume("/usr/local/cuda"))
 //                , new Bind("/usr/local/cuda-11.7", new Volume("/usr/local/cuda-11.7"))
         );
