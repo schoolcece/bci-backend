@@ -226,9 +226,6 @@ public class TaskServiceImpl implements TaskService {
             // 7. 更新任务状态为已完成
             taskDO.setStatus(CustomConstants.BCITaskStatus.SUCCESS);
             commonMapper.updateStatusById(taskDO);
-            
-            // 8. 释放计算节点资源
-            commonMapper.usedNodeByIp(computeNodeIp);
 
             //8. 关闭该次任务资源
             dockerClient.close();
