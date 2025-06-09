@@ -17,7 +17,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Configuration
 @EnableAsync
 public class TaskExecThreadPoolConfig {
-    private static final int CORE_POOL_SIZE = 20;
+    private static final int CORE_POOL_SIZE = 30;
 
     private static final int MAX_POOL_SIZE = 50;
 
