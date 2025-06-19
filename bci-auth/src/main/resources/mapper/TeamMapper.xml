@@ -71,15 +71,21 @@
         where id = #{teamId}
     </select>
     <select id="countTeamIdsByParadigmAndStatus" resultType="int">
-        SELECT COUNT(*)
-        FROM bci_application
-        WHERE paradigm_id = #{paradigm} AND status = 1
+        SELECT COUNT(DISTINCT ba.id)
+        FROM bci_application ba
+                 JOIN bci_team bt ON ba.team_id = bt.id
+        WHERE ba.paradigm_id = #{paradigm}
+          AND ba.status = 1
+          AND bt.status = 0
     </select>
     <select id="selectTeamIdsByParadigmAndStatusWithPagination" resultType="int">
-        SELECT team_id
-        FROM bci_application
-        WHERE paradigm_id = #{paradigm} AND status = 1
-        ORDER BY team_id
+        SELECT ba.team_id
+        FROM bci_application ba
+                 JOIN bci_team bt ON ba.team_id = bt.id
+        WHERE ba.paradigm_id = #{paradigm}
+          AND ba.status = 1
+          AND bt.status = 0
+        ORDER BY ba.team_id
             LIMIT #{limit} OFFSET #{offset}
     </select>
 
