@@ -62,9 +62,16 @@ public class AsyncTask {
             }catch (Exception ee){
                 logger.debug("容器{}已经停止!", task.getContainerId());
             }
-            logContent.append("算法运行超时！！！");
-            containerLogDO.setContent(logContent.toString());
-            clearAfterTask(CustomConstants.BCITaskStatus.FILED, containerLogDO, taskingKey, task, dockerClient);
+
+            if(task.getScore() == null) {
+                logContent.append("算法运行超时！！！");
+                containerLogDO.setContent(logContent.toString());
+                clearAfterTask(CustomConstants.BCITaskStatus.FILED, containerLogDO, taskingKey, task, dockerClient);
+            }
+            else {
+                containerLogDO.setContent(logContent.toString());
+                clearAfterTask(CustomConstants.BCITaskStatus.SUCCESS, containerLogDO, taskingKey, task, dockerClient);
+            }
             return;
         }
 
