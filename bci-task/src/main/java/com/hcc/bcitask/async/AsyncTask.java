@@ -69,6 +69,10 @@ public class AsyncTask {
                 clearAfterTask(CustomConstants.BCITaskStatus.FILED, containerLogDO, taskingKey, task, dockerClient);
             }
             else {
+                long expire = redisComponent.getExpireForLong(countKey, SECONDS);
+                if (expire>=0){
+                    redisComponent.increment(countKey);
+                }
                 containerLogDO.setContent(logContent.toString());
                 clearAfterTask(CustomConstants.BCITaskStatus.SUCCESS, containerLogDO, taskingKey, task, dockerClient);
             }

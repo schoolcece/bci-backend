@@ -111,7 +111,7 @@ public class TaskServiceImpl implements TaskService {
         String taskingKey = KeyConvertUtils.taskingKeyConvert(taskDO.getTeamId(), taskDO.getParadigmId());
         checkCommitTimes(countKey, taskDO.getParadigmId());
         //4. 检查该用户所在队伍是否有正在运行的任务
-        if (!redisComponent.setIfAbsent(taskingKey, 1L, taskConfig.getMaxTime().get(taskDO.getParadigmId())+60, TimeUnit.SECONDS)) {
+        if (!redisComponent.setIfAbsent(taskingKey, 1L, taskConfig.getMaxTime().get(taskDO.getParadigmId())+600, TimeUnit.SECONDS)) {
             throw new RTException(ErrorCodeEnum.HAS_TASK_RUNNING.getCode(), ErrorCodeEnum.HAS_TASK_RUNNING.getMsg());
         }
         //5. 获取代码信息
