@@ -63,7 +63,9 @@ public class AsyncTask {
                 logger.debug("容器{}已经停止!", task.getContainerId());
             }
 
-            if(task.getScore() == null) {
+            TaskDO updatedTask = commonMapper.selectTaskById(task.getId());
+            Float score = updatedTask.getScore();
+            if(score == null) {
                 logContent.append("算法运行超时！！！");
                 containerLogDO.setContent(logContent.toString());
                 clearAfterTask(CustomConstants.BCITaskStatus.FILED, containerLogDO, taskingKey, task, dockerClient);
