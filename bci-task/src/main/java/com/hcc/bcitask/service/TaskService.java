@@ -2,6 +2,7 @@ package com.hcc.bcitask.service;
 
 import com.hcc.common.model.R;
 import com.hcc.common.model.dto.TaskDTO;
+import com.hcc.common.model.dto.TaskFinalDTO;
 import com.hcc.common.model.vo.RankVO;
 import com.hcc.common.model.vo.TaskVO;
 
@@ -31,4 +32,18 @@ public interface TaskService {
     String getLog(int taskId);
 
     void stopRunningTask(int taskId);
+
+    void createTaskForFinals(int paradigmId, int codeId, String taskName, int taskType);
+
+    void confirmTask(int taskId);
+
+    void execTaskForFinals(int taskId);
+
+    void execAllTaskForFinals(int paradigmId);
+
+    TaskFinalDTO getTaskForFinals(int paradigm, int curPage);
+
+    void cancelConfirm(int taskId);
+
+    void stopAllTaskForFinals(int paradigmId);
 }

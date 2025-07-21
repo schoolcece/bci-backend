@@ -40,6 +40,7 @@ public interface BCIConfig {
         private String updateScoreURl;
         private String codePath;
         private Map<Integer, String> dataPath;
+        private int finalGroup;
     }
 
     @Configuration

@@ -14,4 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface CodeFeign {
     @GetMapping("/code/getCodeUrlById")
     String getCodeUrlById(@RequestParam("codeId")int codeId);
+
+    @GetMapping("/code/getMd5ById")
+    String getMd5ById(@RequestParam("codeId")int codeId);
 }

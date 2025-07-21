@@ -11,6 +11,9 @@ drop table if exists bci_user_team;
 drop table if exists bci_application;
 
 drop table if exists bci_code;
+drop table if exists bci_task_final;
+drop table if exists bci_task_group_final;
+drop table if exists bci_compute_resource_final;
 
 CREATE TABLE `bci_event`(
                             `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -26,10 +29,10 @@ ALTER TABLE
     `bci_event` comment '赛事表';
 
 insert into bci_event (event_name, event_leader, event_desc, logo_url, start_time, end_time)
-values ('python赛事', 1, 'python算法提交', 'gdf', '2025-05-01', '2026-07-31');
+values ('python赛事', 1, 'python算法提交', 'gdf', '2024-06-01', '2024-07-31');
 
 insert into bci_event (event_name, event_leader, event_desc, logo_url, start_time, end_time)
-values ('matlab赛事', 1, 'matlab算法提交', 'gdf', '2025-05-01', '2026-07-31');
+values ('matlab赛事', 1, 'matlab算法提交', 'gdf', '2024-06-01', '2024-07-31');
 
 CREATE TABLE `bci_paradigm`(
                                `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -123,9 +126,9 @@ ALTER TABLE
     `bci_application` comment '报名参赛表';
 
 
-insert into bci.bci_user (id, username, mobile, email, university, profession, uid, birthday, role) values (null, 'admin', '13664355687', 'episodexiii@163.com', 'bupt', '电子信息', 'admin', '2000-01-01', 1);
+insert into bci.bci_user (id, username, mobile, email, university, profession, uid, birthday, role) values (null, 'hcc', '15735181737', '1301646502@qq.com', 'byut', '电子信息', 'hcc1573518', '1996-09-18', 1);
 
-insert into bci.bci_user (id, username, mobile, email, university, profession, uid, birthday, role) values (null, 'user1', '13664355687', 'episodexiii@163.com', 'bupt', '电子信息', 'user1', '2000-01-01', 0);
+insert into bci.bci_user (id, username, mobile, email, university, profession, uid, birthday, role) values (null, 'hxx', '15735181737', '1301646502@qq.com', 'byut', '电子信息', 'hcc1573518', '1996-09-18', 0);
 
 CREATE TABLE `bci_code`(
                            `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -179,14 +182,35 @@ CREATE TABLE `bci_container_log`(
 ALTER TABLE
     `bci_container_log` comment '容器日志表';
 
-CREATE TABLE `bci_file` (
-                            `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                            `paradigm_id` INT NOT NULL COMMENT '所属范式 ID',
-                            `url` VARCHAR(255) NOT NULL COMMENT '文件路径',
-                            `user_id` INT NOT NULL COMMENT '上传用户 ID',
-                            `file_name` VARCHAR(255) NOT NULL COMMENT '文件名',
-                            `file_size` BIGINT NOT NULL COMMENT '文件大小（字节）',
-                            `file_type` VARCHAR(50) NOT NULL COMMENT '文件类型',
-                            `description` TEXT COMMENT '文件描述',
-                            `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '上传时间'
-) COMMENT='用户上传文件表';
+CREATE TABLE `bci_task_final`(
+                           `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                           `user_id` INT NOT NULL comment '用户id',
+                           `team_id` INT NOT NULL comment '队伍id',
+                           `code_id` INT NOT NULL comment '代码id',
+                           `paradigm_id` INT NOT NULL comment '范式id',
+                           `task_name` VARCHAR(255) NOT NULL comment '任务名称',
+                           `task_type` TINYINT NOT NULL DEFAULT 0 comment '任务类型 0代表cpu任务， 1代表gpu任务',
+                           `compute_node_ip` VARCHAR(25) comment '计算节点',
+                           `status` TINYINT NOT NULL DEFAULT 0 comment '确认状态 0代表未确认，1代表已确认'
+);
+ALTER TABLE
+    `bci_task_final` comment '决赛任务表';
+
+CREATE TABLE `bci_task_group_final`(
+                                       `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                                       `task_id` INT NOT NULL comment '任务id',
+                                       `group_id` TINYINT NOT NULL comment '被试id',
+                                       `container_id` VARCHAR(255) default NULL comment '容器id',
+                                       `container_name` VARCHAR(255) default NULL comment '容器名',
+                                       `status` TINYINT NOT NULL default 0 comment '状态： 0:待运行 1:正常运行 2:运行出错'
+);
+ALTER TABLE
+    `bci_task_group_final` comment '决赛容器组表';
+
+CREATE TABLE `bci_compute_resource_final`(
+                                `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                                `team_id` INT NOT NULL COMMENT '队伍id',
+                                `ip` VARCHAR(15) NOT NULL comment '节点ip'
+);
+ALTER TABLE
+    `bci_compute_resource_final` comment '决赛计算资源表';
