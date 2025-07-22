@@ -32,6 +32,14 @@
         VALUES (#{containerLogDO.taskId}, #{containerLogDO.content})
             ON DUPLICATE KEY UPDATE content = VALUES(content);
     </insert>
+    <insert id="insertTaskFinal">
+        insert into bci_task_final (user_id, team_id, code_id, paradigm_id, task_name, task_type, status)
+        values (#{taskFinalDO.userId}, #{taskFinalDO.teamId}, #{taskFinalDO.codeId}, #{taskFinalDO.paradigmId}, #{taskFinalDO.taskName}, #{taskFinalDO.taskType}, #{taskFinalDO.status})
+    </insert>
+    <insert id="insertTaskGroupFinal">
+        insert into bci_task_group_final (task_id, group_id, container_name, container_id, status)
+        values (#{taskGroupFinalDO.taskId}, #{taskGroupFinalDO.groupId}, #{taskGroupFinalDO.containerName}, #{taskGroupFinalDO.containerId}, #{taskGroupFinalDO.status})
+    </insert>
     <update id="updateScoreById">
         update bci_task set score = #{score}
         where id = #{taskId}
@@ -49,6 +57,14 @@
     </update>
     <update id="usedNodeByIp">
         UPDATE  bci_compute_resource SET running_tasks = running_tasks-1 where ip = #{computeNodeIp}
+    </update>
+    <update id="updateTaskFinalById">
+        update bci_task_final set compute_node_ip = #{taskFinalDO.computeNodeIp}, status = #{taskFinalDO.status}
+        where id = #{taskFinalDO.id}
+    </update>
+    <update id="updateTaskGroupFinalById">
+        update bci_task_group_final set status = #{taskGroupFinalDO.status}
+        where id = #{taskGroupFinalDO.id}
     </update>
     <delete id="deleteTaskById">
         update bci_task set show_status = 0
@@ -106,5 +122,43 @@
         select content
         from bci_container_log
         where task_id = #{taskId}
+    </select>
+
+    <select id="selectTaskFinalById" resultType="com.hcc.common.model.entity.TaskFinalDO">
+        select id, user_id, team_id, code_id, paradigm_id, task_type, task_name, compute_node_ip, status
+        from bci_task_final
+        where id = #{taskId}
+    </select>
+    <select id="selectComputeNodeForFinalsByTeamId" resultType="java.lang.String">
+        select ip
+        from bci_compute_resource_final
+        where team_id = #{teamId}
+    </select>
+    <select id="selectContainerIdByTaskIdAndGroupId" resultType="java.lang.String">
+        select container_id
+        from bci_task_group_final
+        where task_id = #{taskId} and group_id = #{groupid}
+    </select>
+    <select id="selectTaskGroupFinalByTaskIdAndGroupId" resultType="com.hcc.common.model.entity.TaskGroupFinalDO">
+        select id, task_id, group_id, container_id, container_name, status
+        from bci_task_group_final
+        where task_id = #{taskId} and group_id = #{groupid}
+    </select>
+    <select id="selectTaskFinalByParadigmIdAndStatus" resultType="com.hcc.common.model.entity.TaskFinalDO">
+        select id, user_id, team_id, code_id, paradigm_id, task_name, task_type, compute_node_ip, status
+        from bci_task_final
+        where paradigm_id = #{paradigmId} and status = 1
+    </select>
+    <select id="selectTaskFinalByUserIdAndParadigm" resultType="com.hcc.common.model.vo.TaskFinalVO">
+        select id, task_name, status
+        from bci_task_final
+        where user_id = #{userId} and paradigm_id = #{paradigm}
+        order by id desc
+            limit #{index}, #{pageSize}
+    </select>
+    <select id="selectCountForFinals" resultType="java.lang.Long">
+        select count(*)
+        from bci_task_final
+        where user_id = #{userId} and paradigm_id = #{paradigm}
     </select>
 </mapper>
