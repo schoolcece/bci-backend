@@ -26,4 +26,6 @@ public interface CodeService extends IService<CodeDO> {
     CodeDTO listCode(int paradigmId, int current);
 
     String getCodeUrlById(int codeId);
+
+    String getMd5ById(int codeId);
 }

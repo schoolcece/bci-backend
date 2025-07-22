@@ -20,4 +20,9 @@
         from bci_code
         where id = #{codeId}
     </select>
+    <select id="getMd5ById" resultType="java.lang.String">
+        select md5
+        from bci_code
+        where id = #{codeId}
+    </select>
 </mapper>
