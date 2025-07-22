@@ -125,6 +125,67 @@ public class TaskController {
         return R.ok();
     }
 
+    /**
+     * 创建决赛任务接口
+     * @param
+     * @return
+     */
+    @PostMapping("/createTaskForFinals")
+    public R createTaskForFinals(@RequestParam("paradigmId") int paradigmId, @RequestParam("codeId") int codeId,
+                                 @RequestParam("taskName") String taskName, @RequestParam("taskType") int taskType) {
+        taskService.createTaskForFinals(paradigmId, codeId, taskName, taskType);
+        return R.ok();
+    }
+
+    /**
+     * 确认代码版本接口
+     * @param
+     * @return
+     */
+    @PostMapping("/confirmTask")
+    public R confirmTask(@RequestParam("taskId") int taskId) {
+        taskService.confirmTask(taskId);
+        return R.ok();
+    }
+
+    @PostMapping("/cancelConfirm")
+    public R cancelConfirm(@RequestParam("taskId") int taskId) {
+        taskService.cancelConfirm(taskId);
+        return R.ok();
+    }
+
+    /**
+     * 决赛任务启动接口
+     * @param
+     * @return
+     */
+    @PostMapping("/execTaskForFinals")
+    public R execTaskForFinals(@RequestParam("taskId") int taskId) {
+        taskService.execTaskForFinals(taskId);
+        return R.ok();
+    }
+
+    /**
+     * 决赛所有任务启动接口
+     * @param
+     * @return
+     */
+    @PostMapping("/execAllTaskForFinals")
+    public R execAllTaskForFinals(@RequestParam("paradigmId") int paradigmId) {
+        taskService.execAllTaskForFinals(paradigmId);
+        return R.ok();
+    }
+
+    @PostMapping("/stopAllTaskForFinals")
+    public R stopAllTaskForFinals(@RequestParam("paradigmId") int paradigmId) {
+        taskService.stopAllTaskForFinals(paradigmId);
+        return R.ok();
+    }
+
+    @GetMapping("/getTaskForFinals")
+    public R getTaskForFinals(@RequestParam("paradigm") int paradigm, @RequestParam(value = "curPage", defaultValue = "1") int curPage) {
+        return R.ok().put("data", taskService.getTaskForFinals(paradigm, curPage));
+    }
 
 //======================================以下为内部调用接口==========================================================================================
 

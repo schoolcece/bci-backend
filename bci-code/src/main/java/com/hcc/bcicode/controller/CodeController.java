@@ -3,6 +3,9 @@ package com.hcc.bcicode.controller;
 import com.hcc.bcicode.service.CodeService;
 import com.hcc.common.annotation.Loggable;
 import com.hcc.common.model.R;
+import com.hcc.common.model.bo.UserInfoBO;
+import com.hcc.common.utils.KeyConvertUtils;
+import com.hcc.common.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,6 +46,12 @@ public class CodeController {
     public R list(@RequestParam int paradigmId,
                   @RequestParam(value = "current", defaultValue = "1") int current){
         return R.ok().put("data", codeService.listCode(paradigmId, current));
+    }
+
+    @GetMapping("/getTask")
+    public R lockCode(@RequestParam("paradigm") int paradigm, @RequestParam(value = "curPage", defaultValue = "1") int curPage) {
+        UserInfoBO user = UserUtils.getUser();
+        return R.ok().put("data", taskService.getTask(paradigm, curPage)).put("running", redisComponent.hasKey(KeyConvertUtils.taskingKeyConvert(user.getTeamInfoMap().get(paradigm).getTeamId(), paradigm)));
     }
 
     /**
