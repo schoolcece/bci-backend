@@ -48,12 +48,6 @@ public class CodeController {
         return R.ok().put("data", codeService.listCode(paradigmId, current));
     }
 
-    @GetMapping("/getTask")
-    public R lockCode(@RequestParam("paradigm") int paradigm, @RequestParam(value = "curPage", defaultValue = "1") int curPage) {
-        UserInfoBO user = UserUtils.getUser();
-        return R.ok().put("data", taskService.getTask(paradigm, curPage)).put("running", redisComponent.hasKey(KeyConvertUtils.taskingKeyConvert(user.getTeamInfoMap().get(paradigm).getTeamId(), paradigm)));
-    }
-
     /**
      * 代码路径查询接口 内部调用接口
      * @param codeId

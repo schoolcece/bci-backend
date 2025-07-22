@@ -65,7 +65,7 @@
         where show_status = 1 and id = #{taskId}
     </select>
     <select id="selectTaskByUserIdAndParadigm" resultType="com.hcc.common.model.vo.TaskVO">
-        select id, task_name, status, create_time, score
+        select id, task_name, status, create_time
         from bci_task
         where show_status = 1 and user_id = #{userId} and paradigm_id = #{paradigm}
         order by create_time desc
