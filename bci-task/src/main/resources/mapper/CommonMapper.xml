@@ -70,6 +70,10 @@
         update bci_task set show_status = 0
         where id = #{taskId}
     </delete>
+    <delete id="deleteTaskGroupFinalByTaskId">
+        delete from bci_task_group_final
+        where task_id = #{taskId}
+    </delete>
 
     <select id="selectNodes" resultType="com.hcc.common.model.entity.ComputeNodeDO">
         select id, ip, running_tasks, max_tasks, status

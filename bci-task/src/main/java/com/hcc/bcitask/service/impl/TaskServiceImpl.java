@@ -395,6 +395,7 @@ public class TaskServiceImpl implements TaskService {
                         .withHostConfig(hostConfig)
                         .withCmd("/bin/sh" , "-c", taskConfig.getCmd()).exec();
             } catch (Exception e) {
+                redisComponent.deleteForLong(taskingKey);
                 logger.error(e.getLocalizedMessage());
                 throw new RTException(ErrorCodeEnum.COMPUTE_RESOURCE_FAILD.getCode(), ErrorCodeEnum.COMPUTE_RESOURCE_FAILD.getMsg());
             }
@@ -402,6 +403,7 @@ public class TaskServiceImpl implements TaskService {
             try {
                 gis = new GZIPInputStream(new FileInputStream(codeUrl));
             }catch (Exception e){
+                redisComponent.deleteForLong(taskingKey);
                 logger.error(e.getLocalizedMessage());
                 throw new RTException(ErrorCodeEnum.CODE_NOT_EXIST.getCode(), ErrorCodeEnum.CODE_NOT_EXIST.getMsg());
             }
