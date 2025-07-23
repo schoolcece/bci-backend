@@ -49,7 +49,7 @@ public enum ErrorCodeEnum {
     // 2.14 停止任务失败
     STOP_TASK_FAILED(100414, "停止任务失败"),
 
-    HAS_TASK_CONFIRMED(100415, "有任务正在执行， 请等待执行完毕");
+    HAS_TASK_CONFIRMED(100415, "有其他已确认的代码，请先取消确认");
 
 
 
