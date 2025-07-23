@@ -361,7 +361,7 @@ public class TaskServiceImpl implements TaskService {
 
         String taskingKey = KeyConvertUtils.taskingKeyConvert(taskFinalDO.getTeamId(), taskFinalDO.getParadigmId());
         if (!redisComponent.setIfAbsent(taskingKey, 1L)) {
-            throw new RTException(ErrorCodeEnum.HAS_TASK_RUNNING.getCode(), ErrorCodeEnum.HAS_TASK_RUNNING.getMsg());
+            throw new RTException(ErrorCodeEnum.HAS_TASK_CONFIRMED.getCode(), ErrorCodeEnum.HAS_TASK_CONFIRMED.getMsg());
         }
         //3. 获取代码信息
         String codeUrl = codeFeign.getCodeUrlById(taskFinalDO.getCodeId());

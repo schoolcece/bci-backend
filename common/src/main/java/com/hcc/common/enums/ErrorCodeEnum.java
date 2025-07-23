@@ -47,7 +47,9 @@ public enum ErrorCodeEnum {
     // 2.13 任务信息错误
     TASK_INFO_ERROR(100413, "任务信息错误"),
     // 2.14 停止任务失败
-    STOP_TASK_FAILED(100414, "停止任务失败");
+    STOP_TASK_FAILED(100414, "停止任务失败"),
+
+    HAS_TASK_CONFIRMED(100415, "有任务正在执行， 请等待执行完毕");
 
 
 
