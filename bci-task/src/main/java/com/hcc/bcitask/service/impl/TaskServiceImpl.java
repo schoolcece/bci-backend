@@ -389,7 +389,8 @@ public class TaskServiceImpl implements TaskService {
                         .withDockerCmdExecFactory(new NettyDockerCmdExecFactory())
                         .build();
                 HostConfig hostConfig = new HostConfig();
-//                setGpu(hostConfig);
+                setGpu(hostConfig);
+                setFileBindsForFinal(hostConfig, taskFinalDO.getParadigmId());
                 container = dockerClient.createContainerCmd(paradigmInfo.getImage())
                         .withEnv("COMPONENT_ID=" + taskGroupFinalDO.getContainerName(), "TEAM_NAME=" + authFeign.getTeamName(user.getTeamInfoMap().get(paradigmInfo.getEventId()).getTeamId()), "ALGORITHM_NUMBER=" + groupid)
                         .withHostConfig(hostConfig)
@@ -557,11 +558,24 @@ public class TaskServiceImpl implements TaskService {
 
     private void setFileBinds(HostConfig hostConfig, String dataUrl, int paradigmId) {
         hostConfig.withBinds(new Bind(dataUrl,new Volume(taskConfig.getDataPath().get(paradigmId)))
-                  , new Bind("/nfs/whl/torch_cpu", new Volume("/whl/torch"))
+//                  , new Bind("/nfs/whl/torch_cpu", new Volume("/whl/torch"))
 //                , new Bind("/usr/local/cuda", new Volume("/usr/local/cuda"))
 //                , new Bind("/usr/local/cuda-11.7", new Volume("/usr/local/cuda-11.7"))
         );
     }
+
+    private void setFileBindsForFinal(HostConfig hostConfig, int paradigmId) {
+        if (paradigmId == 3) hostConfig.withBinds(
+                new Bind("/nfs/final/data/mi",new Volume(taskConfig.getDataPath().get(paradigmId))));
+        else if (paradigmId == 5) hostConfig.withBinds(
+                new Bind("/nfs/final/data/generation",new Volume(taskConfig.getDataPath().get(paradigmId))));
+        else if (paradigmId == 7) hostConfig.withBinds(
+                new Bind("/nfs/final/data/ssvep",new Volume(taskConfig.getDataPath().get(paradigmId))));
+        else if (paradigmId == 8) hostConfig.withBinds(
+                new Bind("/nfs/final/data/ecog",new Volume(taskConfig.getDataPath().get(paradigmId))));
+
+    }
+
 
     private void checkCommitTimes(String countKey, int paradigmId) {
         Calendar calendar = Calendar.getInstance();
