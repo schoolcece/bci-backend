@@ -451,7 +451,8 @@ public class TaskServiceImpl implements TaskService {
                     .withDockerCmdExecFactory(new NettyDockerCmdExecFactory())
                     .build();
             for (int groupid = 1; groupid <= taskConfig.getFinalGroup(); groupid ++) {
-                TaskGroupFinalDO taskGroupFinalDO = commonMapper.selectTaskGroupFinalByTaskIdAndGroupId(taskFinalDO.getId(), groupid);
+                TaskGroupFinalDO taskGroupFinalDO = commonMapper.selectTaskGroupFinalByTaskIdAndGroupIdAndStatus(
+                        taskFinalDO.getId(), groupid, 0);
                 String containerId = taskGroupFinalDO.getContainerId();
                 dockerClient.startContainerCmd(containerId).exec();
                 taskGroupFinalDO.setStatus(CustomConstants.BCITaskStatus.PROCESSING);

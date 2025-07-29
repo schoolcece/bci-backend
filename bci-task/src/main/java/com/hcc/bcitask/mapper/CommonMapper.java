@@ -68,7 +68,7 @@ public interface CommonMapper {
 
     String selectContainerIdByTaskIdAndGroupId(@Param("taskId") int taskId, @Param("groupid") int groupid);
 
-    TaskGroupFinalDO selectTaskGroupFinalByTaskIdAndGroupId(@Param("taskId") int taskId, @Param("groupid") int groupid);
+    TaskGroupFinalDO selectTaskGroupFinalByTaskIdAndGroupIdAndStatus(@Param("taskId") int taskId, @Param("groupid") int groupid, @Param("status") int status);
 
     void updateTaskFinalById(@Param("taskFinalDO") TaskFinalDO taskFinalDO);
 

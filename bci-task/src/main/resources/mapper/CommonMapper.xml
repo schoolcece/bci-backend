@@ -143,10 +143,10 @@
         from bci_task_group_final
         where task_id = #{taskId} and group_id = #{groupid}
     </select>
-    <select id="selectTaskGroupFinalByTaskIdAndGroupId" resultType="com.hcc.common.model.entity.TaskGroupFinalDO">
+    <select id="selectTaskGroupFinalByTaskIdAndGroupIdAndStatus" resultType="com.hcc.common.model.entity.TaskGroupFinalDO">
         select id, task_id, group_id, container_id, container_name, status
         from bci_task_group_final
-        where task_id = #{taskId} and group_id = #{groupid}
+        where task_id = #{taskId} and group_id = #{groupid} and status = #{status}
     </select>
     <select id="selectTaskFinalByParadigmIdAndStatus" resultType="com.hcc.common.model.entity.TaskFinalDO">
         select id, user_id, team_id, code_id, paradigm_id, task_name, task_type, compute_node_ip, status
