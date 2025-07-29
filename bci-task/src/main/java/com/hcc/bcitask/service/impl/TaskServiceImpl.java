@@ -457,7 +457,10 @@ public class TaskServiceImpl implements TaskService {
                 taskGroupFinalDO.setStatus(CustomConstants.BCITaskStatus.PROCESSING);
                 commonMapper.updateTaskGroupFinalById(taskGroupFinalDO);
             }
+            taskFinalDO.setStatus(0);
+            commonMapper.updateTaskFinalById(taskFinalDO);
         }
+
     }
 
     @Override
