@@ -2,6 +2,7 @@ package com.hcc.bcitask.service.impl;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;
+import com.github.dockerjava.api.command.RemoveContainerCmd;
 import com.github.dockerjava.api.model.*;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
@@ -36,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -389,7 +391,7 @@ public class TaskServiceImpl implements TaskService {
                         .withDockerCmdExecFactory(new NettyDockerCmdExecFactory())
                         .build();
                 HostConfig hostConfig = new HostConfig();
-//                setGpu(hostConfig);
+                setGpu(hostConfig);
                 setFileBindsForFinal(hostConfig, taskFinalDO.getParadigmId());
                 container = dockerClient.createContainerCmd(paradigmInfo.getImage())
                         .withEnv("COMPONENT_ID=" + taskGroupFinalDO.getContainerName(), "TEAM_NAME=" + authFeign.getTeamName(user.getTeamInfoMap().get(paradigmInfo.getEventId()).getTeamId()), "ALGORITHM_NUMBER=" + groupid)
@@ -457,8 +459,10 @@ public class TaskServiceImpl implements TaskService {
                 taskGroupFinalDO.setStatus(CustomConstants.BCITaskStatus.PROCESSING);
                 commonMapper.updateTaskGroupFinalById(taskGroupFinalDO);
             }
-            taskFinalDO.setStatus(0);
+            taskFinalDO.setStatus(2);
             commonMapper.updateTaskFinalById(taskFinalDO);
+            String taskingKey = KeyConvertUtils.taskingKeyConvert(taskFinalDO.getTeamId(), taskFinalDO.getParadigmId());
+            redisComponent.deleteForLong(taskingKey);
         }
 
     }
@@ -494,6 +498,9 @@ public class TaskServiceImpl implements TaskService {
         taskFinalDO.setComputeNodeIp(null);
         taskFinalDO.setStatus(0);
         commonMapper.updateTaskFinalById(taskFinalDO);
+
+        deleteContainer(taskId);
+
         commonMapper.deleteTaskGroupFinalByTaskId(taskId);
         String taskingKey = KeyConvertUtils.taskingKeyConvert(taskFinalDO.getTeamId(), taskFinalDO.getParadigmId());
         redisComponent.deleteForLong(taskingKey);
@@ -519,6 +526,34 @@ public class TaskServiceImpl implements TaskService {
             }
         }
     }
+
+    private void deleteContainer(int taskId) {
+        TaskFinalDO taskFinalDO = commonMapper.selectTaskFinalById(taskId);
+        DefaultDockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
+                .withDockerHost("tcp://" + taskFinalDO.getComputeNodeIp() + ":2375")
+                .build();
+
+        DockerClient dockerClient = DockerClientBuilder.getInstance(config).build();
+
+        try {
+            List<String> containerIds = commonMapper.selectTaskGroupFinalByTaskId(taskId);
+            for (String containerId : containerIds) {
+                try {
+                    dockerClient.removeContainerCmd(containerId).withForce(true).exec();
+                    System.out.println("Removed container: " + containerId);
+                } catch (Exception e) {
+                    System.err.println("Failed to remove container " + containerId + ": " + e.getMessage());
+                }
+            }
+        } finally {
+            try {
+                dockerClient.close();
+            } catch (IOException e) {
+                System.err.println("Failed to close DockerClient: " + e.getMessage());
+            }
+        }
+    }
+
 
     private void checkPermissions(UserInfoBO user, int paradigmId) {
         if (user.isAdmin()) {
