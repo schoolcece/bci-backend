@@ -497,10 +497,8 @@ public class TaskServiceImpl implements TaskService {
         }
         taskFinalDO.setComputeNodeIp(null);
         taskFinalDO.setStatus(0);
-        commonMapper.updateTaskFinalById(taskFinalDO);
-
         deleteContainer(taskId);
-
+        commonMapper.updateTaskFinalById(taskFinalDO);
         commonMapper.deleteTaskGroupFinalByTaskId(taskId);
         String taskingKey = KeyConvertUtils.taskingKeyConvert(taskFinalDO.getTeamId(), taskFinalDO.getParadigmId());
         redisComponent.deleteForLong(taskingKey);
