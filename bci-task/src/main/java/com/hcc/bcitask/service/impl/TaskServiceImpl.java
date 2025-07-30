@@ -533,8 +533,10 @@ public class TaskServiceImpl implements TaskService {
                 .withDockerHost("tcp://" + taskFinalDO.getComputeNodeIp() + ":2375")
                 .build();
 
-        DockerClient dockerClient = DockerClientBuilder.getInstance(config).build();
-
+        DockerClient dockerClient = DockerClientBuilder
+                .getInstance(config)
+                .withDockerCmdExecFactory(new NettyDockerCmdExecFactory())
+                .build();
         try {
             List<String> containerIds = commonMapper.selectTaskGroupFinalByTaskId(taskId);
             for (String containerId : containerIds) {
