@@ -83,4 +83,6 @@ public interface CommonMapper {
     long selectCountForFinals(@Param("userId") int userId, @Param("paradigm")int paradigm);
 
     void deleteTaskGroupFinalByTaskId(@Param("taskId") int taskId);
+
+    List<TaskFinalDO> selectLastRunTaskFinalByParadigm( @Param("paradigm")int paradigm);
 }

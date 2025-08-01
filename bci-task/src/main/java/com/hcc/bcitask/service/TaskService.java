@@ -46,4 +46,7 @@ public interface TaskService {
     void cancelConfirm(int taskId);
 
     void stopAllTaskForFinals(int paradigmId);
+
+    void confirmAllTestedTask(int paradigmId);
+
 }

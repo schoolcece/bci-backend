@@ -372,7 +372,7 @@ public class TaskServiceImpl implements TaskService {
         taskFinalDO.setComputeNodeIp(computeNodeIp);
 
         //4. 容器组信息入库
-        for (int groupid = 1; groupid <= taskConfig.getFinalGroup(); groupid ++) {
+        for (int groupid = 1; groupid <= taskConfig.getFinalGroupMap().get(taskFinalDO.getParadigmId()); groupid ++) {
             TaskGroupFinalDO taskGroupFinalDO = TaskGroupFinalDO.builder()
                     .taskId(taskFinalDO.getId())
                     .groupId(groupid)
@@ -432,7 +432,7 @@ public class TaskServiceImpl implements TaskService {
                 .getInstance(config)
                 .withDockerCmdExecFactory(new NettyDockerCmdExecFactory())
                 .build();
-        for (int groupid = 1; groupid <= taskConfig.getFinalGroup(); groupid ++) {
+        for (int groupid = 1; groupid <= taskConfig.getFinalGroupMap().get(taskFinalDO.getParadigmId()); groupid ++) {
             TaskGroupFinalDO taskGroupFinalDO = commonMapper.selectTaskGroupFinalByTaskIdAndGroupId(taskId, groupid);
             String containerId = taskGroupFinalDO.getContainerId();
             dockerClient.startContainerCmd(containerId).exec();
@@ -452,7 +452,7 @@ public class TaskServiceImpl implements TaskService {
                     .getInstance(config)
                     .withDockerCmdExecFactory(new NettyDockerCmdExecFactory())
                     .build();
-            for (int groupid = 1; groupid <= taskConfig.getFinalGroup(); groupid ++) {
+            for (int groupid = 1; groupid <= taskConfig.getFinalGroupMap().get(paradigmId); groupid ++) {
                 TaskGroupFinalDO taskGroupFinalDO = commonMapper.selectTaskGroupFinalByTaskIdAndGroupId(taskFinalDO.getId(), groupid);
                 String containerId = taskGroupFinalDO.getContainerId();
                 dockerClient.startContainerCmd(containerId).exec();
@@ -515,13 +515,88 @@ public class TaskServiceImpl implements TaskService {
                     .getInstance(config)
                     .withDockerCmdExecFactory(new NettyDockerCmdExecFactory())
                     .build();
-            for (int groupid = 1; groupid <= taskConfig.getFinalGroup(); groupid ++) {
+            for (int groupid = 1; groupid <= taskConfig.getFinalGroupMap().get(paradigmId); groupid++) {
                 TaskGroupFinalDO taskGroupFinalDO = commonMapper.selectTaskGroupFinalByTaskIdAndGroupId(taskFinalDO.getId(), groupid);
                 String containerId = taskGroupFinalDO.getContainerId();
                 dockerClient.stopContainerCmd(containerId).exec();
-                taskGroupFinalDO.setStatus(CustomConstants.BCITaskStatus.PROCESSING);
-                commonMapper.updateTaskGroupFinalById(taskGroupFinalDO);
             }
+        }
+    }
+
+    @Override
+    public void confirmAllTestedTask(int paradigmId) {
+        List<TaskFinalDO> taskFinalDOS = commonMapper.selectLastRunTaskFinalByParadigm(paradigmId);
+
+        for (TaskFinalDO taskFinalDO : taskFinalDOS) {
+            String taskingKey = KeyConvertUtils.taskingKeyConvert(taskFinalDO.getTeamId(), taskFinalDO.getParadigmId());
+            if (redisComponent.hasKey(taskingKey)) {
+                throw new RTException(ErrorCodeEnum.HAS_TASK_CONFIRMED.getCode(), ErrorCodeEnum.HAS_TASK_CONFIRMED.getMsg());
+            }
+        }
+
+        for (TaskFinalDO taskFinalDO : taskFinalDOS) {
+            TaskFinalDO taskFinalDONew = TaskFinalDO.builder()
+                    .userId(taskFinalDO.getUserId())
+                    .teamId(taskFinalDO.getTeamId())
+                    .codeId(taskFinalDO.getCodeId())
+                    .paradigmId(taskFinalDO.getParadigmId())
+                    .taskName(taskFinalDO.getTaskName() + "final")
+                    .taskType(taskFinalDO.getTaskType())
+                    .computeNodeIp(taskFinalDO.getComputeNodeIp())
+                    .build();
+
+            String taskingKey = KeyConvertUtils.taskingKeyConvert(taskFinalDONew.getTeamId(), taskFinalDONew.getParadigmId());
+
+            ParadigmDTO paradigmInfo = competitionFeign.getInfoByParadigmId(taskFinalDONew.getParadigmId());
+            commonMapper.insertTaskFinal(taskFinalDONew);
+            String codeUrl = codeFeign.getCodeUrlById(taskFinalDONew.getCodeId());
+
+            for (int groupid = 1; groupid <= taskConfig.getFinalGroupMap().get(paradigmId); groupid ++) {
+                TaskGroupFinalDO taskGroupFinalDO = TaskGroupFinalDO.builder()
+                        .taskId(taskFinalDONew.getId())
+                        .groupId(groupid)
+                        .containerName("team_" + taskFinalDONew.getTeamId() + ".group_" + groupid)
+                        .status(0)
+                        .build();
+
+                //5. 获取计算节点并创建三个容器
+                DockerClient dockerClient;
+                CreateContainerResponse container;
+                try {
+                    DefaultDockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
+                            .withDockerHost("tcp://"+taskFinalDONew.getComputeNodeIp()+":2375")
+                            .build();
+                    dockerClient = DockerClientBuilder
+                            .getInstance(config)
+                            .withDockerCmdExecFactory(new NettyDockerCmdExecFactory())
+                            .build();
+                    HostConfig hostConfig = new HostConfig();
+                    setGpu(hostConfig);
+                    setFileBindsForFinal(hostConfig, taskFinalDONew.getParadigmId());
+                    container = dockerClient.createContainerCmd(paradigmInfo.getImage())
+                            .withEnv("COMPONENT_ID=" + taskGroupFinalDO.getContainerName(), "TEAM_NAME=" + authFeign.getTeamName(taskFinalDONew.getTeamId()), "ALGORITHM_NUMBER=" + groupid)
+                            .withHostConfig(hostConfig)
+                            .withCmd("/bin/sh" , "-c", taskConfig.getCmd()).exec();
+                } catch (Exception e) {
+                    redisComponent.deleteForLong(taskingKey);
+                    logger.error(e.getLocalizedMessage());
+                    throw new RTException(ErrorCodeEnum.COMPUTE_RESOURCE_FAILD.getCode(), ErrorCodeEnum.COMPUTE_RESOURCE_FAILD.getMsg());
+                }
+                GZIPInputStream gis = null;
+                try {
+                    gis = new GZIPInputStream(new FileInputStream(codeUrl));
+                }catch (Exception e){
+                    redisComponent.deleteForLong(taskingKey);
+                    logger.error(e.getLocalizedMessage());
+                    throw new RTException(ErrorCodeEnum.CODE_NOT_EXIST.getCode(), ErrorCodeEnum.CODE_NOT_EXIST.getMsg());
+                }
+                dockerClient.copyArchiveToContainerCmd(container.getId()).withTarInputStream(gis).withRemotePath(taskConfig.getCodePath()).exec();
+                taskGroupFinalDO.setContainerId(container.getId());
+                commonMapper.insertTaskGroupFinal(taskGroupFinalDO);
+
+            }
+            taskFinalDONew.setStatus(1);
+            commonMapper.updateTaskFinalById(taskFinalDONew);
         }
     }
 

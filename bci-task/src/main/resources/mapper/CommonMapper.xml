@@ -172,4 +172,16 @@
         from bci_task_final
         where user_id = #{userId} and paradigm_id = #{paradigm}
     </select>
+
+    <select id="selectLastRunTaskFinalByParadigm" resultType="com.hcc.common.model.entity.TaskFinalDO">
+        select btf.*
+        from bci_task_final as btf
+                 join (
+            select team_id, MAX(id) as max_id
+            from bci_task_final
+            WHERE `status` = 2 AND paradigm_id = #{paradigm}
+            group by team_id
+        ) as t_max
+        on btf.id = t_max.max_id
+    </select>
 </mapper>
