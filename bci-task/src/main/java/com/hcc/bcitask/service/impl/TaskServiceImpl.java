@@ -543,10 +543,13 @@ public class TaskServiceImpl implements TaskService {
                     .taskName(taskFinalDO.getTaskName() + "final")
                     .taskType(taskFinalDO.getTaskType())
                     .computeNodeIp(taskFinalDO.getComputeNodeIp())
+                    .status(1)
                     .build();
 
             String taskingKey = KeyConvertUtils.taskingKeyConvert(taskFinalDONew.getTeamId(), taskFinalDONew.getParadigmId());
-
+            if (!redisComponent.setIfAbsent(taskingKey, 1L)) {
+                throw new RTException(ErrorCodeEnum.HAS_TASK_CONFIRMED.getCode(), ErrorCodeEnum.HAS_TASK_CONFIRMED.getMsg());
+            }
             ParadigmDTO paradigmInfo = competitionFeign.getInfoByParadigmId(taskFinalDONew.getParadigmId());
             commonMapper.insertTaskFinal(taskFinalDONew);
             String codeUrl = codeFeign.getCodeUrlById(taskFinalDONew.getCodeId());
@@ -595,8 +598,6 @@ public class TaskServiceImpl implements TaskService {
                 commonMapper.insertTaskGroupFinal(taskGroupFinalDO);
 
             }
-            taskFinalDONew.setStatus(1);
-            commonMapper.updateTaskFinalById(taskFinalDONew);
         }
     }
 

@@ -176,7 +176,7 @@
     <select id="selectLastRunTaskFinalByParadigm" resultType="com.hcc.common.model.entity.TaskFinalDO">
         select btf.*
         from bci_task_final as btf
-                 join (
+        join (
             select team_id, MAX(id) as max_id
             from bci_task_final
             WHERE `status` = 2 AND paradigm_id = #{paradigm}
