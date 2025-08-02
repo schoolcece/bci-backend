@@ -3,6 +3,8 @@ package com.hcc.bcitask.service.impl;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.command.RemoveContainerCmd;
+import com.github.dockerjava.api.exception.DockerException;
+import com.github.dockerjava.api.exception.NotModifiedException;
 import com.github.dockerjava.api.model.*;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
@@ -443,7 +445,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void execAllTaskForFinals(int paradigmId) {
-        List<TaskFinalDO> taskFinalDOS = commonMapper.selectTaskFinalByParadigmIdAndStatus(paradigmId);
+        List<TaskFinalDO> taskFinalDOS = commonMapper.selectTaskFinalByParadigmIdAndStatus(paradigmId, 1);
         for (TaskFinalDO taskFinalDO : taskFinalDOS) {
             DefaultDockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
                     .withDockerHost("tcp://"+taskFinalDO.getComputeNodeIp()+":2375")
@@ -506,7 +508,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void stopAllTaskForFinals(int paradigmId) {
-        List<TaskFinalDO> taskFinalDOS = commonMapper.selectTaskFinalByParadigmIdAndStatus(paradigmId);
+        List<TaskFinalDO> taskFinalDOS = commonMapper.selectTaskFinalByParadigmIdAndStatus(paradigmId, 2);
         for (TaskFinalDO taskFinalDO : taskFinalDOS) {
             DefaultDockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
                     .withDockerHost("tcp://"+taskFinalDO.getComputeNodeIp()+":2375")
@@ -518,7 +520,15 @@ public class TaskServiceImpl implements TaskService {
             for (int groupid = 1; groupid <= taskConfig.getFinalGroupMap().get(paradigmId); groupid++) {
                 TaskGroupFinalDO taskGroupFinalDO = commonMapper.selectTaskGroupFinalByTaskIdAndGroupId(taskFinalDO.getId(), groupid);
                 String containerId = taskGroupFinalDO.getContainerId();
-                dockerClient.stopContainerCmd(containerId).exec();
+                try {
+                    dockerClient.stopContainerCmd(containerId).exec();
+                } catch (NotModifiedException e) {
+                    // 处理304异常（容器已停止）
+                    System.out.println("容器可能已停止，忽略异常：containerId=" + containerId + ", msg=" + e.getMessage());
+                } catch (DockerException e) {
+                    // 其他Docker异常
+                    System.out.println("停止容器失败：containerId=" + containerId + ", 错误：" + e.getMessage());
+                }
             }
         }
     }
