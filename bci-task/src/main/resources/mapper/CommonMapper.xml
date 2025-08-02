@@ -34,8 +34,8 @@
     </insert>
     <insert id="insertTaskFinal" parameterType="com.hcc.common.model.entity.TaskFinalDO"
             useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-        insert into bci_task_final (user_id, team_id, code_id, paradigm_id, task_name, task_type, status)
-        values (#{taskFinalDO.userId}, #{taskFinalDO.teamId}, #{taskFinalDO.codeId}, #{taskFinalDO.paradigmId}, #{taskFinalDO.taskName}, #{taskFinalDO.taskType}, #{taskFinalDO.status})
+        insert into bci_task_final (user_id, team_id, code_id, paradigm_id, task_name, task_type, status, compute_node_ip)
+        values (#{taskFinalDO.userId}, #{taskFinalDO.teamId}, #{taskFinalDO.codeId}, #{taskFinalDO.paradigmId}, #{taskFinalDO.taskName}, #{taskFinalDO.taskType}, #{taskFinalDO.status}, #{taskFinalDO.computeNodeIp})
     </insert>
     <insert id="insertTaskGroupFinal">
         insert into bci_task_group_final (task_id, group_id, container_name, container_id, status)
