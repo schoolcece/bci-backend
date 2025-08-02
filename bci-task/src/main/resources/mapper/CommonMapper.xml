@@ -32,7 +32,8 @@
         VALUES (#{containerLogDO.taskId}, #{containerLogDO.content})
             ON DUPLICATE KEY UPDATE content = VALUES(content);
     </insert>
-    <insert id="insertTaskFinal">
+    <insert id="insertTaskFinal" parameterType="com.hcc.common.model.entity.TaskFinalDO"
+            useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         insert into bci_task_final (user_id, team_id, code_id, paradigm_id, task_name, task_type, status)
         values (#{taskFinalDO.userId}, #{taskFinalDO.teamId}, #{taskFinalDO.codeId}, #{taskFinalDO.paradigmId}, #{taskFinalDO.taskName}, #{taskFinalDO.taskType}, #{taskFinalDO.status})
     </insert>
