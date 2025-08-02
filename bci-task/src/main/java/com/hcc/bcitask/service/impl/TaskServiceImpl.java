@@ -551,7 +551,7 @@ public class TaskServiceImpl implements TaskService {
                     .teamId(taskFinalDO.getTeamId())
                     .codeId(taskFinalDO.getCodeId())
                     .paradigmId(taskFinalDO.getParadigmId())
-                    .taskName(taskFinalDO.getTaskName() + "final")
+                    .taskName(taskFinalDO.getTaskName())
                     .taskType(taskFinalDO.getTaskType())
                     .computeNodeIp(taskFinalDO.getComputeNodeIp())
                     .status(1)
