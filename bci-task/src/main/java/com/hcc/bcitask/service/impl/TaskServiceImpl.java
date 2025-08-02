@@ -527,6 +527,17 @@ public class TaskServiceImpl implements TaskService {
     public void confirmAllTestedTask(int paradigmId) {
         List<TaskFinalDO> taskFinalDOS = commonMapper.selectLastRunTaskFinalByParadigm(paradigmId);
 
+        System.out.println("查询到的数据库结果数量：" + taskFinalDOS.size());
+        for (int i = 0; i < taskFinalDOS.size(); i++) {
+            TaskFinalDO task = taskFinalDOS.get(i);
+            // 打印每个任务的关键信息（按需选择字段）
+            System.out.println("第 " + (i+1) + " 条记录：" +
+                    "id=" + task.getId() +
+                    ", teamId=" + task.getTeamId() +
+                    ", status=" + task.getStatus() +
+                    ", paradigmId=" + task.getParadigmId());
+        }
+
         for (TaskFinalDO taskFinalDO : taskFinalDOS) {
             String taskingKey = KeyConvertUtils.taskingKeyConvert(taskFinalDO.getTeamId(), taskFinalDO.getParadigmId());
             if (redisComponent.hasKey(taskingKey)) {
