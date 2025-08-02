@@ -159,7 +159,7 @@
     <select id="selectTaskFinalByParadigmIdAndStatus" resultType="com.hcc.common.model.entity.TaskFinalDO">
         select id, user_id, team_id, code_id, paradigm_id, task_name, task_type, compute_node_ip, status
         from bci_task_final
-        where paradigm_id = #{paradigmId} and status = 2
+        where paradigm_id = #{paradigmId} and status = #{status}
     </select>
     <select id="selectTaskFinalByUserIdAndParadigm" resultType="com.hcc.common.model.vo.TaskFinalVO">
         select id, task_name, status
